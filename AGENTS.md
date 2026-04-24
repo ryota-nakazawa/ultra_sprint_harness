@@ -7,15 +7,16 @@ This repository is a Codex-first harness for rapid prototyping.
 Use this repository to decide the smallest useful prototype approach, then execute the matching flow.
 
 Do not jump straight into implementation.
-Start with lightweight discovery, then route into the correct prototype flow.
+Start from the interview summary markdown, run lightweight discovery on top of it, then route into the correct prototype flow.
 
 ## Default Working Order
 
 1. Read [README.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/README.md) for the human-facing overview if needed.
-2. Start with [harness/flows/discovery.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/discovery.md).
-3. Create or update `projects/{project_name}/project-requirements.md`.
-4. Use [harness/router.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/router.md) to choose the smallest viable path.
-5. Follow exactly one detailed flow:
+2. Read `projects/{project_name}/interview-summary.md` if it exists.
+3. Start with [harness/flows/discovery.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/discovery.md).
+4. Create or update `projects/{project_name}/project-requirements.md`.
+5. Use [harness/router.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/router.md) to choose the smallest viable path.
+6. Follow exactly one detailed flow:
    - [harness/flows/webapp.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/webapp.md)
    - [harness/flows/codex-skills.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/codex-skills.md)
    - [harness/flows/gpts.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/gpts.md)
@@ -23,6 +24,7 @@ Start with lightweight discovery, then route into the correct prototype flow.
 
 ## Core Rules
 
+- Treat `interview-summary.md` as the default input artifact.
 - Keep discovery light.
 - Prefer the smallest viable solution.
 - Leave unknowns as `TBD` instead of over-specifying.
@@ -31,12 +33,13 @@ Start with lightweight discovery, then route into the correct prototype flow.
 
 ## Discovery Rules
 
-Discovery should only answer these three questions:
+Discovery should read the interview summary first, then answer these three questions:
 
 1. What problem are we solving?
 2. What is the smallest solution type?
 3. What counts as success for the PoC?
 
+Only ask follow-up questions when the interview summary is missing key information.
 Do not expand discovery into a heavy requirements phase unless the task truly needs it.
 
 ## Routing Rules
@@ -54,6 +57,7 @@ If uncertain, return to discovery and reduce scope.
 
 For simple tasks:
 
+- `interview-summary.md` plus `project-requirements.md` is enough.
 - `project-requirements.md` is enough.
 
 For multi-step or ambiguous tasks, also use:
@@ -71,6 +75,7 @@ Use these files to preserve decisions, status, findings, and handoff context.
 
 - Follow [harness/flows/webapp.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/webapp.md).
 - Default to a fast local prototype.
+- Use `interview-summary.md` as the default source of user needs, actors, and constraints.
 - Use `planning-with-files` style documents when the work becomes complex.
 - Use `Understand-Anything` later for structure understanding or impact analysis when the app grows.
 - Use diagrams for findings when helpful:
@@ -83,6 +88,7 @@ Use these files to preserve decisions, status, findings, and handoff context.
 
 - Follow [harness/flows/codex-skills.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/codex-skills.md).
 - Treat this as creating a reusable Codex skill, not a one-off prompt.
+- Extract triggers, inputs, outputs, and reusable steps from `interview-summary.md` first.
 - Use the local [$skill-creator](/Users/ryota/.codex/skills/.system/skill-creator/SKILL.md) guidance.
 - Prefer concise `SKILL.md` files with clear trigger descriptions.
 
@@ -90,6 +96,7 @@ Use these files to preserve decisions, status, findings, and handoff context.
 
 - Follow [harness/flows/gpts.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/gpts.md).
 - Default to prompt-first.
+- Read role, audience, tone, and guardrails from `interview-summary.md` first.
 - Start with `instructions.md`.
 - Add `actions.json` or `knowledge/` only when truly needed.
 
