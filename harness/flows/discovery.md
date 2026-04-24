@@ -8,6 +8,10 @@
 ## 成果物
 
 - `projects/{プロジェクト名}/project-requirements.md`
+- 必要に応じて `projects/{プロジェクト名}/task-plan.md`
+- 必要に応じて `projects/{プロジェクト名}/progress.md`
+- 必要に応じて `projects/{プロジェクト名}/findings.md`
+- 必要に応じて `projects/{プロジェクト名}/findings-diagrams/`
 
 ## フェーズ
 
@@ -48,6 +52,17 @@
 
 ここで、やり過ぎを防ぐために PoC のゴールラインを明確にする。
 
+## planning-with-files の使い分け
+
+実装や調査が 3 ステップ以上になりそうなら、`planning-with-files` の考え方を使って以下を作る。
+
+- `task-plan.md` — フェーズ、タスク、進行状況
+- `progress.md` — 実行ログ、テスト結果、次にやること
+- `findings.md` — 調査メモ、意思決定、比較結果、未解決論点
+- `findings-diagrams/` — 図で残した方が伝わる内容の出力先
+
+単純な依頼では `project-requirements.md` だけでよい。
+
 ## `project-requirements.md` の最低限の構造
 
 ```markdown
@@ -74,3 +89,56 @@
 - PoC 成立条件:
 - TBD:
 ```
+
+## `task-plan.md` の最低限の構造
+
+```markdown
+# Task Plan
+
+## Phases
+
+- [ ] フェーズ1:
+- [ ] フェーズ2:
+- [ ] フェーズ3:
+
+## Current Focus
+
+- いま進めていること:
+- 次にやること:
+```
+
+## `progress.md` の最低限の構造
+
+```markdown
+# Progress
+
+## Latest
+
+- 実施したこと:
+- 確認結果:
+- 次にやること:
+```
+
+## `findings.md` の最低限の構造
+
+```markdown
+# Findings
+
+## Notes
+
+- 調査結果:
+- 意思決定:
+- 保留事項:
+```
+
+## `findings-diagrams/` の使い方
+
+以下のような内容は、文章だけで残すより図にした方が伝わりやすい。
+
+- 画面遷移
+- データフロー
+- コンポーネント構成
+- 改善案の比較図
+
+`mcp_excalidraw` が使える場合は、`findings.md` を元に Excalidraw で図を作る。
+使えない場合は、Figma / FigJam の図生成または Mermaid を代替として使う。
