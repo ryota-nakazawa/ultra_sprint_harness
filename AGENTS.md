@@ -76,21 +76,42 @@ Use these files to preserve decisions, status, findings, and handoff context.
 - Follow [harness/flows/webapp.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/webapp.md).
 - Default to a fast local prototype.
 - Use `interview-summary.md` as the default source of user needs, actors, and constraints.
+- Default to `HTML / CSS / JavaScript` for the frontend.
+- Add Node.js only when backend or API mediation is needed.
+- Base the visual design on the current NTT DATA blue-themed brand direction.
 - Use `planning-with-files` style documents when the work becomes complex.
-- Use `Understand-Anything` later for structure understanding or impact analysis when the app grows.
+- Use `Understand-Anything` once the first prototype exists, then use it again later for structure understanding or impact analysis as needed.
 - Use diagrams for findings when helpful:
   - screen transitions
   - data flow
   - component structure
   - comparison of improvement options
 
+Call timing:
+
+- `planning-with-files`: when the work is multi-step, has handoff risk, or needs decision history
+- `Understand-Anything`: immediately after the first working prototype exists, then later when you need structure or impact analysis
+- `mcp_excalidraw`: in the first findings phase after the prototype is shown, then later when a diagram will explain updates faster
+
 ### Codex Skills
 
 - Follow [harness/flows/codex-skills.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/codex-skills.md).
 - Treat this as creating a reusable Codex skill, not a one-off prompt.
 - Extract triggers, inputs, outputs, and reusable steps from `interview-summary.md` first.
-- Use the local [$skill-creator](/Users/ryota/.codex/skills/.system/skill-creator/SKILL.md) guidance.
+- Use the local [$skill-creator](/Users/ryota/.codex/skills/.system/skill-creator/SKILL.md) guidance and treat it as the standard path for implementation.
 - Prefer concise `SKILL.md` files with clear trigger descriptions.
+- Use `Understand-Anything` once the first usable skill artifact exists, then use it again later for structure or impact analysis as needed.
+- Use diagrams for findings when helpful:
+  - trigger structure
+  - input/output flow
+  - file responsibility split
+  - comparison of improvement options
+
+Call timing:
+
+- `planning-with-files`: when the work is multi-step, has handoff risk, or needs decision history
+- `Understand-Anything`: immediately after the first usable skill artifact exists, then later when you need structure or impact analysis
+- `mcp_excalidraw`: in the first findings phase after the skill is reviewed, then later when a diagram will explain updates faster
 
 ### GPTs
 
@@ -98,7 +119,20 @@ Use these files to preserve decisions, status, findings, and handoff context.
 - Default to prompt-first.
 - Read role, audience, tone, and guardrails from `interview-summary.md` first.
 - Start with `instructions.md`.
+- Refine the system prompt through iterative dialogue rather than treating the first draft as final.
 - Add `actions.json` or `knowledge/` only when truly needed.
+- Use `Understand-Anything` once the first usable GPT artifact exists, then use it again later for structure or impact analysis as needed.
+- Use diagrams for findings when helpful:
+  - conversation flow
+  - guardrail boundaries
+  - actions/knowledge relationships
+  - comparison of improvement options
+
+Call timing:
+
+- `planning-with-files`: when the work is multi-step, has handoff risk, or needs decision history
+- `Understand-Anything`: immediately after the first usable GPT artifact exists, then later when you need structure or impact analysis
+- `mcp_excalidraw`: in the first findings phase after the GPT is reviewed, then later when a diagram will explain updates faster
 
 ### Workflow / Harness Design
 
