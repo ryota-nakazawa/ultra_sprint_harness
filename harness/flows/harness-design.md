@@ -13,6 +13,12 @@
 - ハーネス定義ファイル一式（router.md, flows/*.md, templates/）
 - 必要に応じてCLAUDE.mdの更新
 
+## 変更運用
+
+ハーネス自体の修正は、原則として作業ブランチまたは Git worktree で行う。
+動作や読みやすさを確認し、良さそうなものだけ `main` に統合する。
+小さな文言修正でも、後から判断理由を追えるように重要な変更意図は `project-requirements.md`、`progress.md`、または該当フロー本文に残す。
+
 ## ステップ
 
 ### Step 1: 目的のヒアリング（対話）
@@ -62,6 +68,7 @@
 3. 実行手順の定義
 4. フィードバックループの定義
 5. `planning-with-files` / `Understand-Anything` / `mcp_excalidraw` をいつ呼ぶかの定義
+6. UI や見た目の納得感が重要なフローでは、実装前に画像生成で方向性確認を行うかの定義
 
 外部 skill / tool の定義は、最低でも次を含める：
 

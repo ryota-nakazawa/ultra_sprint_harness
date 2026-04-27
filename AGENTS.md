@@ -30,6 +30,8 @@ Start from the interview summary markdown, run lightweight discovery on top of i
 - Leave unknowns as `TBD` instead of over-specifying.
 - Use file-based planning for anything non-trivial.
 - Record important decisions instead of keeping them only in chat context.
+- For UI-heavy Web App work, create a visual direction image with Codex image generation before implementation when the screen look materially affects user acceptance.
+- Use a worktree-first delivery style: make non-trivial harness or prototype changes in a dedicated branch/worktree when possible, then integrate into `main` only after the result looks good.
 
 ## Discovery Rules
 
@@ -79,6 +81,7 @@ Use these files to preserve decisions, status, findings, and handoff context.
 - Default to `HTML / CSS / JavaScript` for the frontend.
 - Add Node.js only when backend or API mediation is needed.
 - Base the visual design on the current NTT DATA blue-themed brand direction.
+- For UI-heavy screens, generate a first-look image before coding and use user feedback to align the direction.
 - Use `planning-with-files` style documents when the work becomes complex.
 - Use `Understand-Anything` once the first prototype exists, then use it again later for structure understanding or impact analysis as needed.
 - Use diagrams for findings when helpful:
@@ -90,6 +93,7 @@ Use these files to preserve decisions, status, findings, and handoff context.
 Call timing:
 
 - `planning-with-files`: when the work is multi-step, has handoff risk, or needs decision history
+- `imagegen`: after Web App requirements are confirmed and before implementation, when visual direction needs user buy-in
 - `Understand-Anything`: immediately after the first working prototype exists, then later when you need structure or impact analysis
 - `mcp_excalidraw`: in the first findings phase after the prototype is shown, then later when a diagram will explain updates faster
 
@@ -100,6 +104,7 @@ Call timing:
 - Extract triggers, inputs, outputs, and reusable steps from `interview-summary.md` first.
 - Use the local [$skill-creator](/Users/ryota/.codex/skills/.system/skill-creator/SKILL.md) guidance and treat it as the standard path for implementation.
 - Prefer concise `SKILL.md` files with clear trigger descriptions.
+- When testing a skill, the final chat reply must demonstrate the skill's intended chat output, not just link to generated files. For report, minutes, review, analysis, or summary skills, include the readable Markdown body with headings, tables, bold labels, and visual anchors when appropriate.
 - Use `Understand-Anything` once the first usable skill artifact exists, then use it again later for structure or impact analysis as needed.
 - Use diagrams for findings when helpful:
   - trigger structure
