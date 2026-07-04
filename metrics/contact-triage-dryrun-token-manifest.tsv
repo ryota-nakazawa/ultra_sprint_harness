@@ -1,0 +1,16 @@
+# bucket	path	label
+input	projects/contact-triage-dryrun/interview-summary.md	user-provided interview summary
+input	README.md	harness overview
+input	harness/flows/discovery.md	discovery flow
+input	harness/router.md	routing rules
+input	harness/flows/webapp.md	webapp flow
+input	harness/templates/common/acceptance-criteria.md	acceptance criteria template
+input	harness/templates/common/sprint-metrics.md	sprint metrics template
+input	/Users/ryota/.codex/skills/frontend-skill/SKILL.md	frontend-skill instructions
+output	projects/contact-triage-dryrun/project-requirements.md	project requirements
+output	projects/contact-triage-dryrun/acceptance-criteria.md	acceptance criteria
+output	projects/contact-triage-dryrun/sprint-metrics.md	sprint metrics
+output	projects/contact-triage-dryrun/findings.md	findings
+output	projects/contact-triage-dryrun/index.html	webapp html
+output	projects/contact-triage-dryrun/styles.css	webapp css
+output	projects/contact-triage-dryrun/app.js	webapp js
