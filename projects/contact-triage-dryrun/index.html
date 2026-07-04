@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CS Triage Desk</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">問い合わせ一次対応トリアージ</p>
+        <h1>CS Triage Desk</h1>
+      </div>
+      <div class="actions">
+        <label class="upload">
+          CSV 読み込み
+          <input id="csvInput" type="file" accept=".csv,text/csv" />
+        </label>
+        <button id="resetButton" type="button">サンプルに戻す</button>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="metrics" aria-label="集計">
+        <div class="metric">
+          <span>全件</span>
+          <strong id="totalCount">0</strong>
+        </div>
+        <div class="metric danger">
+          <span>緊急度 高</span>
+          <strong id="highCount">0</strong>
+        </div>
+        <div class="metric">
+          <span>要確認</span>
+          <strong id="openCount">0</strong>
+        </div>
+        <div class="metric">
+          <span>修正済み</span>
+          <strong id="editedCount">0</strong>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="filters" aria-label="フィルタ">
+          <h2>絞り込み</h2>
+          <label>
+            キーワード
+            <input id="searchInput" type="search" placeholder="顧客名・本文で検索" />
+          </label>
+          <label>
+            緊急度
+            <select id="urgencyFilter">
+              <option value="all">すべて</option>
+              <option value="高">高</option>
+              <option value="中">中</option>
+              <option value="低">低</option>
+            </select>
+          </label>
+          <label>
+            カテゴリ
+            <select id="categoryFilter">
+              <option value="all">すべて</option>
+              <option value="製品不具合">製品不具合</option>
+              <option value="使い方">使い方</option>
+              <option value="請求">請求</option>
+              <option value="その他">その他</option>
+            </select>
+          </label>
+
+          <div class="chart">
+            <h3>カテゴリ別</h3>
+            <div id="categoryBars"></div>
+          </div>
+        </aside>
+
+        <section class="list" aria-label="問い合わせ一覧">
+          <div class="listHeader">
+            <div>
+              <h2>問い合わせ一覧</h2>
+              <p id="listSummary">0 件を表示中</p>
+            </div>
+            <button id="classifyButton" type="button">AI 分類を再実行</button>
+          </div>
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>受付</th>
+                  <th>顧客</th>
+                  <th>件名</th>
+                  <th>緊急度</th>
+                  <th>カテゴリ</th>
+                  <th>状態</th>
+                </tr>
+              </thead>
+              <tbody id="ticketBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="detail" aria-label="選択中の問い合わせ">
+          <div class="detailTop">
+            <p class="eyebrow">選択中</p>
+            <h2 id="detailTitle">問い合わせを選択</h2>
+          </div>
+          <p id="detailBody" class="bodyText">一覧から行を選ぶと、分類理由と修正操作を確認できます。</p>
+
+          <div class="editPanel">
+            <label>
+              緊急度
+              <select id="urgencyEdit">
+                <option value="高">高</option>
+                <option value="中">中</option>
+                <option value="低">低</option>
+              </select>
+            </label>
+            <label>
+              カテゴリ
+              <select id="categoryEdit">
+                <option value="製品不具合">製品不具合</option>
+                <option value="使い方">使い方</option>
+                <option value="請求">請求</option>
+                <option value="その他">その他</option>
+              </select>
+            </label>
+            <button id="saveEditButton" type="button">分類を修正</button>
+          </div>
+
+          <div class="rationale">
+            <h3>AI 判定メモ</h3>
+            <p id="reasonText">緊急語、影響範囲、請求語などから分類します。</p>
+          </div>
+
+          <div class="demoNote">
+            <h3>15分デモで見る論点</h3>
+            <ul>
+              <li>緊急度「高」の抽出が現場感覚と合うか</li>
+              <li>誤分類を現場が迷わず直せるか</li>
+              <li>本番で必要な精度基準を決められるか</li>
+            </ul>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
