@@ -206,8 +206,10 @@ flowchart TD
 │       ├── webapp/
 │       ├── codex-skills/
 │       ├── gpts/
-│       └── harness-design/
-└── projects/
+│       ├── harness-design/
+│       └── common/
+├── projects/
+└── metrics/
 ```
 
 ## `projects/` に何を置くか
@@ -220,6 +222,10 @@ flowchart TD
   インタビュー GPTs がまとめた要件サマリー。実運用での標準入力
 - `project-requirements.md`
   目的、課題、期待効果、制約、PoC 成立条件を書く
+- `acceptance-criteria.md`
+  PoC 成立条件（Yes/No 判定可能な文）と第1・2層の合否を残す
+- `sprint-metrics.md`
+  試行回数・一発合格・顧客デモの結果（第3層）を残す台帳
 - `task-plan.md`
   実装フェーズと現在の作業を残す
 - `progress.md`

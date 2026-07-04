@@ -171,3 +171,15 @@ Diagrams complement `findings.md`; they do not replace it.
 - Do not create heavy documentation by default.
 - Do not turn every task into a full software process.
 - Do not replace written findings with diagrams only.
+
+## 計測ルール
+
+このハーネスでは、スプリントの効果測定のため次を必ず守る。
+
+- discovery の完了条件に `acceptance-criteria.md` の作成を含める
+  （PoC 成立条件はすべて Yes / No で判定できる文にする）
+- 成果物の動作確認後、第1・2層を判定し `sprint-metrics.md` に記録する
+- 成果物に合わせて成立条件を後から緩めない。変更する場合は変更履歴に理由を残す
+- 記録は回数と Yes / No のみでよい。金額や正確な工数は書かない
+- 記録の記入がユーザーの負担にならないよう、埋められる項目は AI が下書きし、
+  ユーザーには確認だけを求める

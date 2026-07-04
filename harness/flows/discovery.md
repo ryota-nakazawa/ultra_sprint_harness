@@ -84,6 +84,20 @@
 
 ここで、やり過ぎを防ぐために PoC のゴールラインを明確にする。
 
+## 成立条件の判定可能化（discovery の完了条件）
+
+「成立条件の確認」の最後に、次を行ってから routing に進む。
+
+1. `harness/templates/common/acceptance-criteria.md` を複製して
+   `projects/{プロジェクト名}/acceptance-criteria.md` を作る
+2. project-requirements.md の「PoC として何ができれば十分か」を、
+   **Yes / No で判定できる文**に変換して第2層の表に書く（3〜7 項目）
+3. 「このプロトで顧客のどんな意思決定を引き出したいか」を仮説欄に 1〜2 文で書く
+
+Yes / No の文に変換できない成立条件が残っている間は、曖昧さが残っているサイン。
+そのまま実装に進まず、短くユーザーに確認する。
+あわせて `harness/templates/common/sprint-metrics.md` も複製し、基本情報だけ埋めておく。
+
 ## checkpoint の入れ方
 
 共通ディスカバリーでは、以下の順で短く返す。
