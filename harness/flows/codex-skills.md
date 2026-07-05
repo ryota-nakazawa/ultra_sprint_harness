@@ -97,6 +97,9 @@ Codex 用の skill を作るフロー。
    結果と判定日を記入する（判定方法が LLM の項目は、成果物と条件文を渡して項目別に判定させてよい）
 2. 判定サマリー（合格数・一発合格の Yes/No）を埋める
 3. `sprint-metrics.md` のセクション 1〜2（試行回数、一発合格、フォールバック、手戻り主因）を記入する
+4. `harness/templates/common/token-manifest.tsv` を `metrics/{プロジェクト名}-token-manifest.tsv` に複製し、実際に参照した input と生成・更新した output を記入する
+5. `python tools/count_tokens.py metrics/{プロジェクト名}-token-manifest.tsv --passes {成立pass数} --report metrics/{プロジェクト名}-token-usage.md` を実行する
+6. レポートの総 token と CoP-token を `sprint-metrics.md` セクション 2 に転記する
 
 不合格項目が残る場合はここで再試行に戻る。**成果物に合わせて条件を緩めない**
 （条件を変える場合は acceptance-criteria.md の変更履歴に理由を残す）。

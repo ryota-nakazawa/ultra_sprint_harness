@@ -7,6 +7,8 @@
 - Manifest: `metrics/contact-triage-dryrun-token-manifest.tsv`
 - Scope: files actually used for the harness dry run and files generated as the project output.
 - Caveat: this is still an estimate from visible text. It excludes Codex system/developer instructions, tool schemas, hidden reasoning, cache effects, and transient tool output that was not saved to files.
+- Calibration multiplier `k = measured tokens / estimated tokens`: TBD.
+- Calibration procedure: in the next real project, compare this estimate with measured usage from Codex session logs under `~/.codex/sessions/` and record `k` here.
 
 ## Result
 

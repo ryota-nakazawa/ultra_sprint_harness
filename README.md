@@ -225,11 +225,24 @@ flowchart TD
 - `acceptance-criteria.md`
   PoC 成立条件（Yes/No 判定可能な文）と第1・2層の合否を残す
 - `sprint-metrics.md`
-  試行回数・一発合格・顧客デモの結果（第3層）を残す台帳
+  試行回数・一発合格・CoP-token・顧客デモの結果（第3層）を残す台帳
+- `metrics/{project-name}-token-manifest.tsv`
+  CoP-token 算出対象の input / output 一覧
+- `metrics/{project-name}-token-usage.md`
+  `tools/count_tokens.py` が生成する token 使用量と CoP-token レポート
 - `task-plan.md`
   実装フェーズと現在の作業を残す
 - `progress.md`
   実施内容、確認結果、次にやることを残す
+
+### 計測の運用ルール
+
+- トークン CoP を単独の KPI にしない。フォールバック率・手戻り主因・第3層とセットで見る
+- 件数 n < 10 のルートは「率」として読まない（個別の findings を読む）
+- 成立条件は実装前に固定する。変更は acceptance-criteria の変更履歴に理由つきで残す
+- 実案件の失敗は evals のケースに還流させる（テスト対策への過適合を防ぐ）
+- 第3層（顧客価値）は evals 化しない。sprint-metrics §3 でのみ計測する
+- 次の案件で一度、Codex セッションログ（`~/.codex/sessions/` の usage）の実測トークンと `tools/count_tokens.py` の推定トークンを突合して、キャリブレーション倍率 `k = 実測 ÷ 推定` を求める
 - `findings.md`
   調査結果、意思決定、未解決事項を残す
 - `findings-diagrams/`
@@ -443,7 +456,7 @@ Workflow / ハーネス設計フローは、AI への指示フローそのもの
 - 共通ディスカバリーあり
 - 4種類の個別フローあり
 - ルート別 templates は骨組み中心、`common/` に計測テンプレートあり
-- 3層判定とスプリント記録の計測の仕組みを導入済み
+- 3層判定、スプリント記録、CoP-token 計測の仕組みを導入済み
 - projects は生成先として確保済み
 
 つまり、実際のプロトタイプを量産する前の「運用ルールと設計方針」が入っている状態です。

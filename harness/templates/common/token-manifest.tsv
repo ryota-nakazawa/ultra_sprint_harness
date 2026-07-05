@@ -1,0 +1,11 @@
+# bucket	path	label
+# Copy this to metrics/{project-name}-token-manifest.tsv after generating an artifact.
+# Include every file that materially shaped the output and every generated output file.
+input	projects/{project-name}/interview-summary.md	user-provided interview summary
+input	harness/flows/discovery.md	discovery flow
+input	harness/router.md	routing rules
+input	harness/templates/common/acceptance-criteria.md	acceptance criteria template
+input	harness/templates/common/sprint-metrics.md	sprint metrics template
+output	projects/{project-name}/project-requirements.md	project requirements
+output	projects/{project-name}/acceptance-criteria.md	acceptance criteria
+output	projects/{project-name}/sprint-metrics.md	sprint metrics

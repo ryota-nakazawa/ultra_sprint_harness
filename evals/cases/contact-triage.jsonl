@@ -1,0 +1,6 @@
+{"id":"C-01","input":{"project_dir":"projects/contact-triage-dryrun","check":"seed_ticket_count"},"expected":{"min_count":30},"judge_type":"auto"}
+{"id":"C-02","input":{"project_dir":"projects/contact-triage-dryrun","check":"urgency_labels"},"expected":{"labels":["高","中","低"]},"judge_type":"auto"}
+{"id":"C-03","input":{"project_dir":"projects/contact-triage-dryrun","check":"category_labels"},"expected":{"labels":["製品不具合","使い方","請求","その他"]},"judge_type":"auto"}
+{"id":"C-04","input":{"project_dir":"projects/contact-triage-dryrun","check":"dashboard_counts"},"expected":{"selectors":["totalCount","highCount","categoryBars"]},"judge_type":"auto"}
+{"id":"C-05","input":{"project_dir":"projects/contact-triage-dryrun","check":"editable_fields"},"expected":{"selectors":["urgencyEdit","categoryEdit","saveEditButton"]},"judge_type":"auto"}
+{"id":"C-06","input":{"project_dir":"projects/contact-triage-dryrun","check":"csv_import"},"expected":{"selectors":["csvInput"],"functions":["parseCsv"],"listeners":["csvInput.addEventListener(\"change\""]},"judge_type":"auto"}

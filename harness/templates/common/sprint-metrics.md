@@ -5,7 +5,7 @@
 > ② 顧客デモのあと → セクション 3 を追記
 >
 > **記入の目安**: 5 分以内。迷う項目は空欄でよい。**正確さより、続けることを優先する。**
-> 金額の記入は不要（第1段階では回数と Yes / No だけを集める。金額化は月次集計側で行う）。
+> 金額の記入は不要。生成を伴うスプリントでは CoP-token だけ毎回記録する。
 
 ---
 
@@ -29,7 +29,10 @@
 | 第2層の結果 | 合格 __ / __ 項目 |
 | 人間フォールバック（AI では成立せず、**結局人が主に作った**） | ☐ あり ／ ☐ なし |
 | ルート切替（途中で成果物種別を変えた） | ☐ なし ／ ☐ あり（ __ → __ ） |
-| AI 利用量（ツールのログから転記できる場合のみ） | 約 __ トークン or __ 円 |
+| Token manifest | `metrics/{プロジェクト名}-token-manifest.tsv` |
+| Token usage report | `metrics/{プロジェクト名}-token-usage.md` |
+| 総 token（下限推定） | __ tokens |
+| CoP-token（総 token ÷ 成立 pass 数） | __ tokens / pass |
 
 **手戻りの主因**（試行回数 2 回以上のとき、1 つ選ぶ）
 
@@ -58,3 +61,21 @@
 ## 5. 自由メモ
 
 >
+
+## 6. CoP-token 計測メモ
+
+生成を伴うスプリントでは毎回記録する。
+
+1. `harness/templates/common/token-manifest.tsv` を `metrics/{プロジェクト名}-token-manifest.tsv` に複製する
+2. `input` に、実際に参照した interview summary、flow、router、テンプレート、skill 指示、参考資料を入れる
+3. `output` に、生成・更新した成果物ファイルを入れる
+4. 次を実行する
+
+```bash
+python tools/count_tokens.py metrics/{プロジェクト名}-token-manifest.tsv \
+  --passes 1 \
+  --report metrics/{プロジェクト名}-token-usage.md
+```
+
+`--passes` は第1・2層を満たした成立 pass 数。一発合格なら `1`。
+レポートの `estimated CoP-token` をセクション 2 に転記する。
