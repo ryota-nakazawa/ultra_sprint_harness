@@ -5,7 +5,7 @@
 > ② 顧客デモのあと → セクション 3 を追記
 >
 > **記入の目安**: 5 分以内。迷う項目は空欄でよい。**正確さより、続けることを優先する。**
-> 金額の記入は不要。生成を伴うスプリントでは CoP-token だけ毎回記録する。
+> 金額の記入は不要。生成を伴うスプリントでは累積トークンだけ毎回記録する。
 
 ---
 
@@ -31,8 +31,7 @@
 | ルート切替（途中で成果物種別を変えた） | ☐ なし ／ ☐ あり（ __ → __ ） |
 | Token manifest | `metrics/{プロジェクト名}-token-manifest.tsv` |
 | Token usage report | `metrics/{プロジェクト名}-token-usage.md` |
-| 総 token（下限推定） | __ tokens |
-| CoP-token（総 token ÷ 成立 pass 数） | __ tokens / pass |
+| AI 利用量・累積（**全試行の合計**。これがビルド CoP の実測値） | 約 __ トークン |
 
 **手戻りの主因**（試行回数 2 回以上のとき、1 つ選ぶ）
 
@@ -62,7 +61,7 @@
 
 >
 
-## 6. CoP-token 計測メモ
+## 6. ビルド CoP 計測メモ
 
 生成を伴うスプリントでは毎回記録する。
 
@@ -73,9 +72,8 @@
 
 ```bash
 python tools/count_tokens.py metrics/{プロジェクト名}-token-manifest.tsv \
-  --passes 1 \
   --report metrics/{プロジェクト名}-token-usage.md
 ```
 
-`--passes` は第1・2層を満たした成立 pass 数。一発合格なら `1`。
-レポートの `estimated CoP-token` をセクション 2 に転記する。
+レポートの `total` をセクション 2 の「AI 利用量・累積」に転記する。
+作り直しが発生した場合は、合格までの全試行の token usage report を合算して記録する。

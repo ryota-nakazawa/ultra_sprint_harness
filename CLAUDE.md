@@ -56,9 +56,10 @@
 - discovery の完了条件に `acceptance-criteria.md` の作成を含める
   （PoC 成立条件はすべて Yes / No で判定できる文にする）
 - 成果物の動作確認後、第1・2層を判定し `sprint-metrics.md` に記録する
-- 生成を伴う成果物では、token manifest を作成し `tools/count_tokens.py` で CoP-token を計算して `sprint-metrics.md` に記録する
+- 生成を伴う成果物では、token manifest を作成し `tools/count_tokens.py` で累積トークンを計算して `sprint-metrics.md` に記録する
+- AI 利用量は試行ごとではなく累積（合格までの全試行の合計）で記録する。これがビルド CoP の実測値になる
 - 成果物に合わせて成立条件を後から緩めない。変更する場合は変更履歴に理由を残す
-- 金額や正確な工数は書かない。第1段階では回数、Yes / No、CoP-token を残す
+- 金額や正確な工数は書かない。第1段階では回数、Yes / No、累積トークンを残す
 - 記録の記入がユーザーの負担にならないよう、埋められる項目は AI が下書きし、
   ユーザーには確認だけを求める
 - 第1・2層の判定は三段構えで行う: AI 自己判定（下書き）→ 独立ジャッジ → 人間の抜き取り確認。

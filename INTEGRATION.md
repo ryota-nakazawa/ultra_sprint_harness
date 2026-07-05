@@ -97,9 +97,9 @@ Yes / No の文に変換できない成立条件が残っている間は、曖�
 - discovery の完了条件に `acceptance-criteria.md` の作成を含める
   （PoC 成立条件はすべて Yes / No で判定できる文にする）
 - 成果物の動作確認後、第1・2層を判定し `sprint-metrics.md` に記録する
-- 生成を伴う成果物では、token manifest を作成し `tools/count_tokens.py` で CoP-token を計算して `sprint-metrics.md` に記録する
+- 生成を伴う成果物では、token manifest を作成し `tools/count_tokens.py` で累積トークンを計算して `sprint-metrics.md` に記録する
 - 成果物に合わせて成立条件を後から緩めない。変更する場合は変更履歴に理由を残す
-- 金額や正確な工数は書かない。第1段階では回数、Yes / No、CoP-token を残す
+- 金額や正確な工数は書かない。第1段階では回数、Yes / No、累積トークンを残す
 - 記録の記入がユーザーの負担にならないよう、埋められる項目は AI が下書きし、
   ユーザーには確認だけを求める
 ```
@@ -109,8 +109,8 @@ Yes / No の文に変換できない成立条件が残っている間は、曖�
 ```markdown
 - `acceptance-criteria.md` PoC 成立条件（Yes/No 判定可能な文）と第1・2層の合否を残す
 - `sprint-metrics.md` 試行回数・一発合格・顧客デモの結果（第3層）を残す台帳
-- `metrics/{project-name}-token-manifest.tsv` CoP-token 算出対象の input / output 一覧
-- `metrics/{project-name}-token-usage.md` `tools/count_tokens.py` が生成する token 使用量と CoP-token レポート
+- `metrics/{project-name}-token-manifest.tsv` 累積トークン算出対象の input / output 一覧
+- `metrics/{project-name}-token-usage.md` `tools/count_tokens.py` が生成する token 使用量レポート
 ```
 
 ### 2-6. `README.md` — 「ディレクトリ構成」の templates 配下に `common/`、直下に `metrics/` を追記

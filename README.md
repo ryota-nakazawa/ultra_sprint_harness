@@ -225,11 +225,11 @@ flowchart TD
 - `acceptance-criteria.md`
   PoC 成立条件（Yes/No 判定可能な文）と第1・2層の合否を残す
 - `sprint-metrics.md`
-  試行回数・一発合格・CoP-token・顧客デモの結果（第3層）を残す台帳
+  試行回数・一発合格・累積トークン・顧客デモの結果（第3層）を残す台帳
 - `metrics/{project-name}-token-manifest.tsv`
-  CoP-token 算出対象の input / output 一覧
+  累積トークン算出対象の input / output 一覧
 - `metrics/{project-name}-token-usage.md`
-  `tools/count_tokens.py` が生成する token 使用量と CoP-token レポート
+  `tools/count_tokens.py` が生成する token 使用量レポート
 - `task-plan.md`
   実装フェーズと現在の作業を残す
 - `progress.md`
@@ -456,7 +456,7 @@ Workflow / ハーネス設計フローは、AI への指示フローそのもの
 - 共通ディスカバリーあり
 - 4種類の個別フローあり
 - ルート別 templates は骨組み中心、`common/` に計測テンプレートあり
-- 3層判定、スプリント記録、CoP-token 計測の仕組みを導入済み
+- 3層判定、スプリント記録、累積トークンによるビルド CoP 計測の仕組みを導入済み
 - projects は生成先として確保済み
 
 つまり、実際のプロトタイプを量産する前の「運用ルールと設計方針」が入っている状態です。

@@ -3,7 +3,7 @@
 
 Usage:
   python tools/count_tokens.py path/to/manifest.tsv
-  python tools/count_tokens.py path/to/manifest.tsv --passes 1 --report metrics/example-token-usage.md
+  python tools/count_tokens.py path/to/manifest.tsv --report metrics/example-token-usage.md
 
 Manifest format:
   bucket<TAB>path<TAB>label
@@ -40,7 +40,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("manifest", type=Path)
     parser.add_argument("--encoding", default="o200k_base")
-    parser.add_argument("--passes", type=int, default=1, help="Number of successful PoC passes for CoP-token.")
+    parser.add_argument("--passes", type=int, default=1, help="Deprecated compatibility option. Build CoP uses cumulative tokens directly.")
     parser.add_argument("--report", type=Path, help="Write a Markdown token usage report.")
     args = parser.parse_args()
     if args.passes <= 0:
@@ -67,7 +67,7 @@ def main() -> None:
         print(f"{bucket}\t{totals[bucket]}")
     total = sum(totals.values())
     print(f"total\t{total}")
-    print(f"cop_token\t{total / args.passes:.2f}")
+    print(f"build_cop_tokens\t{total}")
 
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
@@ -104,11 +104,11 @@ def main() -> None:
                 "|---|---|---:|",
                 file_rows,
                 "",
-                "## CoP-token",
+                "## Build CoP Tokens",
                 "",
                 "```text",
-                f"estimated CoP-token = {total:,} tokens / {args.passes} pass",
-                f"                    = {total / args.passes:,.0f} tokens per pass",
+                f"build CoP tokens = {total:,} tokens",
+                "                   = cumulative tokens until the artifact passes layer 1 and 2",
                 "```",
                 "",
             ]

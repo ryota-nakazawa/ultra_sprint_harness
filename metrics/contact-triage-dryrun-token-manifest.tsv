@@ -14,3 +14,4 @@ output	projects/contact-triage-dryrun/findings.md	findings
 output	projects/contact-triage-dryrun/index.html	webapp html
 output	projects/contact-triage-dryrun/styles.css	webapp css
 output	projects/contact-triage-dryrun/app.js	webapp js
+output	projects/contact-triage-dryrun/triageRules.js	triage rules

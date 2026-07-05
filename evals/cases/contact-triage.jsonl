@@ -1,6 +1,11 @@
-{"id":"C-01","input":{"project_dir":"projects/contact-triage-dryrun","check":"seed_ticket_count"},"expected":{"min_count":30},"judge_type":"auto"}
-{"id":"C-02","input":{"project_dir":"projects/contact-triage-dryrun","check":"urgency_labels"},"expected":{"labels":["高","中","低"]},"judge_type":"auto"}
-{"id":"C-03","input":{"project_dir":"projects/contact-triage-dryrun","check":"category_labels"},"expected":{"labels":["製品不具合","使い方","請求","その他"]},"judge_type":"auto"}
-{"id":"C-04","input":{"project_dir":"projects/contact-triage-dryrun","check":"dashboard_counts"},"expected":{"selectors":["totalCount","highCount","categoryBars"]},"judge_type":"auto"}
-{"id":"C-05","input":{"project_dir":"projects/contact-triage-dryrun","check":"editable_fields"},"expected":{"selectors":["urgencyEdit","categoryEdit","saveEditButton"]},"judge_type":"auto"}
-{"id":"C-06","input":{"project_dir":"projects/contact-triage-dryrun","check":"csv_import"},"expected":{"selectors":["csvInput"],"functions":["parseCsv"],"listeners":["csvInput.addEventListener(\"change\""]},"judge_type":"auto"}
+{"id":"C-01","target":"static","input":{"project_dir":"projects/contact-triage-dryrun","check":"seed_ticket_count"},"expected":{"min_count":30},"judge_type":"auto"}
+{"id":"C-02","target":"static","input":{"project_dir":"projects/contact-triage-dryrun","check":"urgency_labels"},"expected":{"labels":["高","中","低"]},"judge_type":"auto"}
+{"id":"C-03","target":"static","input":{"project_dir":"projects/contact-triage-dryrun","check":"category_labels"},"expected":{"labels":["製品不具合","使い方","請求","その他"]},"judge_type":"auto"}
+{"id":"C-04","target":"static","input":{"project_dir":"projects/contact-triage-dryrun","check":"dashboard_counts"},"expected":{"selectors":["totalCount","highCount","categoryBars"]},"judge_type":"auto"}
+{"id":"C-05","target":"static","input":{"project_dir":"projects/contact-triage-dryrun","check":"editable_fields"},"expected":{"selectors":["urgencyEdit","categoryEdit","saveEditButton"]},"judge_type":"auto"}
+{"id":"C-06","target":"static","input":{"project_dir":"projects/contact-triage-dryrun","check":"csv_import"},"expected":{"selectors":["csvInput"],"functions":["parseCsv"],"listeners":["csvInput.addEventListener(\"change\""]},"judge_type":"auto"}
+{"id":"R-01","target":"runtime","runner":["node","evals/adapters/contact_triage.js"],"input":{"text":"製品Xが起動しません。本日中に顧客デモがあり、至急対応してほしいです。"},"expected":{"urgency":"高","category":"製品不具合"},"judge_type":"auto","token_source":"none"}
+{"id":"R-02","target":"runtime","runner":["node","evals/adapters/contact_triage.js"],"input":{"text":"6月分の請求金額が見積より高い理由を確認したいです。"},"expected":{"urgency":"低","category":"請求"},"judge_type":"auto","token_source":"none"}
+{"id":"R-03","target":"runtime","runner":["node","evals/adapters/contact_triage.js"],"input":{"text":"操作マニュアルの場所と初回ログイン手順を教えてください。"},"expected":{"urgency":"低","category":"使い方"},"judge_type":"auto","token_source":"none"}
+{"id":"R-04","target":"runtime","runner":["node","evals/adapters/contact_triage.js"],"input":{"text":"安全装置が反応せずラインを止めています。緊急で確認してください。"},"expected":{"urgency":"高","category":"製品不具合"},"judge_type":"auto","token_source":"none"}
+{"id":"R-05","target":"runtime","runner":["node","evals/adapters/contact_triage.js"],"input":{"text":"契約プラン変更の条件と来月からの費用を知りたいです。"},"expected":{"urgency":"低","category":"請求"},"judge_type":"auto","token_source":"none"}
