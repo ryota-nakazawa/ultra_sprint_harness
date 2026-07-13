@@ -18,6 +18,8 @@
 
 - `projects/{プロジェクト名}/interview-summary.md` を前提とした整理結果
 - `projects/{プロジェクト名}/project-requirements.md`
+- `projects/{プロジェクト名}/eval-profile.md`
+- `projects/{プロジェクト名}/eval-cases.md`
 - 必要に応じて `projects/{プロジェクト名}/task-plan.md`
 - 必要に応じて `projects/{プロジェクト名}/progress.md`
 - 必要に応じて `projects/{プロジェクト名}/findings.md`
@@ -84,7 +86,7 @@
 
 ここで、やり過ぎを防ぐために PoC のゴールラインを明確にする。
 
-## 成立条件の判定可能化（discovery の完了条件）
+## 成立条件と eval ケースの判定可能化（discovery の完了条件）
 
 「成立条件の確認」の最後に、次を行ってから routing に進む。
 
@@ -92,11 +94,21 @@
    `projects/{プロジェクト名}/acceptance-criteria.md` を作る
 2. project-requirements.md の「PoC として何ができれば十分か」を、
    **Yes / No で判定できる文**に変換して第2層の表に書く（3〜7 項目）
+   各条件には `業務成功 / 誤実行 / 安全性 / 再現性 / 運用負荷` の評価観点を 1 つ付ける
 3. 「このプロトで顧客のどんな意思決定を引き出したいか」を仮説欄に 1〜2 文で書く
+4. `harness/evals/catalog/` から今回必要な評価観点、ケースパターン、ドメインルール、テスト観点だけを選び、`harness/templates/common/eval-profile.md` を複製して `projects/{プロジェクト名}/eval-profile.md` に選択 ID と採用理由を記録する。カタログを使わない場合は理由を 1 行残す
+5. 選択した項目を案件の状況に具体化して、`harness/templates/common/eval-cases.md` を複製して
+   `projects/{プロジェクト名}/eval-cases.md` を作る
+6. 代表ケース、境界ケース、失敗ケースを最低 1 件ずつ、合計 3〜7 件で書く
+7. 複数機能、外部連携、高影響操作、または評価漏れが心配な案件では、`traceability.md` を作り、中核要件（`REQ-01` 形式）→ acceptance criterion → eval case の対応を記録する。単機能の軽い PoC では省略してよい
 
 Yes / No の文に変換できない成立条件が残っている間は、曖昧さが残っているサイン。
 そのまま実装に進まず、短くユーザーに確認する。
 あわせて `harness/templates/common/sprint-metrics.md` も複製し、基本情報だけ埋めておく。
+
+eval-cases.md は、重い自動評価基盤ではなく軽量な Evals ケース集として扱う。
+初回は人間または LLM が読んで判定できる粒度で十分。自動 grader や runner は v1 では作らない。
+共通カタログは選択元であり、案件ファイルの代わりにはしない。選択内容は必ず `eval-profile.md` に残す。
 
 ## checkpoint の入れ方
 
@@ -179,6 +191,41 @@ Yes / No の文に変換できない成立条件が残っている間は、曖�
 - 想定ユーザー:
 - PoC 成立条件:
 - TBD:
+
+## 中核要件（複数機能・高リスク案件で使う）
+
+- REQ-01:
+```
+
+## `eval-cases.md` の最低限の構造
+
+```markdown
+# eval-cases.md
+
+## 基本情報
+
+- プロジェクト名:
+- ルート種別:
+
+## 評価観点
+
+- 業務成功:
+- 誤実行:
+- 安全性:
+- 再現性:
+- 運用負荷:
+
+## ケース一覧
+
+| ID | 種別 | 評価観点 | 入力 | 期待される振る舞い | NG 例 | 採点方法 | 結果 | メモ |
+|---|---|---|---|---|---|---|---|---|
+| E-01 | 代表 | 業務成功 | | | | 人間 | | |
+| E-02 | 境界 | 再現性 | | | | 人間 | | |
+| E-03 | 失敗 | 誤実行 | | | | 人間 | | |
+
+## 追加ケース候補
+
+- デモ、レビュー、利用中に見つかった失敗を次回評価ケースへ戻す。
 ```
 
 ## `interview-summary.md` の最低限の想定項目

@@ -145,11 +145,24 @@ Web App のベースデザインは、現行の NTT DATA ブランドを参照�
 ### Step 6.5: 合否判定と記録
 
 1. `projects/{プロジェクト名}/acceptance-criteria.md` の第1層・第2層を判定し、
-   結果と判定日を記入する（判定方法が LLM の項目は、成果物と条件文を渡して項目別に判定させてよい）
-2. 判定サマリー（合格数・一発合格の Yes/No）を埋める
-3. `sprint-metrics.md` のセクション 1〜2（試行回数、一発合格、フォールバック、手戻り主因）を記入する
+   結果と判定日を記入する
+2. `projects/{プロジェクト名}/eval-cases.md` のケースを判定し、
+   代表ケース、境界ケース、失敗ケースのどこが弱いかを記録する
+3. 判定サマリー（合格数・一発合格の Yes/No）を埋める
+4. `sprint-metrics.md` のセクション 1〜2（試行回数、一発合格、フォールバック、手戻り主因、eval-cases の結果）を記入する
 
-不合格項目が残る場合はここで再試行に戻る。**成果物に合わせて条件を緩めない**
+LLM で判定する項目は、実装担当とは別コンテキストの評価エージェントで行う。
+評価エージェントには、成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない。
+評価エージェントは、各項目について `ID / 評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返す。`acceptance-criteria.md` と `eval-cases.md` で宣言された評価観点だけを判定対象にし、安全性・権限・送信・削除などの高影響操作に不明点があれば `Needs Review` とする。
+
+評価エージェントの起動時には `projects/{プロジェクト名}/evaluation-runs/{run-id}/` を作る。起動 API が返した agent ID と `fresh_context` を `receipt.json` に、実際の評価依頼を `evaluator-input.md` に、返答全文を `evaluator-result.md` に保存する。これらが、評価を別サブエージェントで実施した監査証跡になる。
+
+評価結果に `Fix` がある場合は、実装へ戻して修正し、再評価する。自動修正は最大 2 回まで。3 回目の実装・評価には入らない。
+`Needs Review` が 1 件でも出た場合、同じ ID が 2 回連続で `Fix` になった場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止める。
+止めた理由と要チェック項目は `eval-cases.md` と `sprint-metrics.md` に記録する。
+
+`Fix` にしてよいのは、明らかな未実装、文言ミス、壊れた導線やエラー、条件に照らして明確に No のものだけ。
+要件や評価基準が曖昧、顧客判断が必要、スコープを広げないと直せない、主観的な良し悪し、安全性の高い判断は `Needs Review` にする。**成果物に合わせて条件を緩めない**
 （条件を変える場合は acceptance-criteria.md の変更履歴に理由を残す）。
 
 ### Step 7: 初回 findings と図の整理
@@ -191,6 +204,9 @@ Web App のベースデザインは、現行の NTT DATA ブランドを参照�
 2. 成立条件をすべて満たしたのに意思決定につながらなかった場合は、
    どの条件が顧客の関心とズレていたかを `findings.md` に残し、
    `acceptance-criteria.md` の「デモ後のふりかえり」欄にも 1 行書く
+3. デモ、レビュー、利用中に見つかった失敗や違和感は、
+   次回から必ず評価するケースとして `eval-cases.md` の「追加ケース候補」に戻す
+4. 新しい失敗や学びがあれば、AI に `findings.md`、`eval-cases.md`、`eval-profile.md` を読ませて `promotion-candidates.md` を下書きさせる。AI は共通カタログを直接編集せず、人が承認した候補だけを `harness/evals/catalog/` へ反映する
 
 ## 注意事項
 

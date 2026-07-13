@@ -1,0 +1,26 @@
+{
+  "run_id": "{UTC timestamp}-iteration-{NN}",
+  "project": "{project name}",
+  "iteration": 0,
+  "evaluator_agent_id": "{agent ID returned by the orchestrator}",
+  "evaluator_nickname": "{optional nickname}",
+  "spawned_by": "orchestrator",
+  "context_isolation": "fresh_context",
+  "allowed_inputs": [
+    "artifact",
+    "run-instructions",
+    "project-requirements.md",
+    "acceptance-criteria.md",
+    "eval-cases.md",
+    "eval-profile.md",
+    "traceability.md (when present)"
+  ],
+  "excluded_inputs": [
+    "implementation chat history",
+    "implementation rationale",
+    "unfinished-work explanations"
+  ],
+  "started_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "completed_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "verdict": "Pass | Fix | Needs Review"
+}

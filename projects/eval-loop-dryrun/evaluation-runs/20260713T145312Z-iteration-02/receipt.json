@@ -1,0 +1,23 @@
+{
+  "run_id": "20260713T145312Z-iteration-02",
+  "project": "eval-loop-dryrun",
+  "iteration": 2,
+  "evaluator_agent_id": "019f5bf7-b930-7940-877a-e4c5f41b5e4e",
+  "evaluator_nickname": "Ptolemy",
+  "spawned_by": "orchestrator",
+  "context_isolation": "fresh_context",
+  "allowed_inputs": [
+    "artifact",
+    "run-instructions",
+    "acceptance-criteria.md",
+    "eval-cases.md"
+  ],
+  "excluded_inputs": [
+    "implementation chat history",
+    "implementation rationale",
+    "unfinished-work explanations"
+  ],
+  "started_at": "2026-07-13T14:53:12Z",
+  "completed_at": "2026-07-13T14:53:29Z",
+  "verdict": "Pass"
+}

@@ -10,7 +10,8 @@
 - `interview-summary.md`: ユーザー提供内容を案件入力として保存
 - `project-requirements.md`: discovery と routing の結果を整理
 - `acceptance-criteria.md`: 第1層 4 項目、第2層 7 項目を Yes / No 条件で記録
-- `sprint-metrics.md`: 内側ループの結果を記録
+- `eval-cases.md`: 代表・境界・失敗ケース 4 件を記録
+- `sprint-metrics.md`: 内側ループと eval-cases の結果を記録
 - `index.html` / `styles.css` / `app.js`: 静的な Web App プロトタイプ
 
 ## 検証結果
@@ -35,3 +36,8 @@
 - 緊急度「高」の見逃しをどこまで許容できるか
 - カテゴリ分類の誤りを現場が何秒程度で修正できるか
 - 本格導入時に、メール・Web フォーム・既存 CS システムのどこからデータを受けるか
+
+## Learning Loop
+
+- 実顧客デモで見つかった分類ミスや修正しにくいケースは、次回から必ず評価するケースとして `eval-cases.md` に戻す。
+- 次の追加候補は「現場担当者が 10 件だけ手修正し、どの分類観点がズレるかを記録する」ケース。

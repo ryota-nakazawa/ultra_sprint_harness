@@ -25,6 +25,7 @@
 5. **Prompt-first** — 特に GPTs は、まず system prompt を整えてから拡張する
 6. **段階的な確認** — 要件→設計→実装→確認の順で進める
 7. **やり直しが安い** — git で各ステップをコミットし、いつでも戻れる
+8. **軽量 Evals** — 成立条件と代表・境界・失敗ケースを使い、失敗を次の評価ケースへ戻す
 
 ## ディレクトリ構造
 
@@ -55,8 +56,27 @@
 
 - discovery の完了条件に `acceptance-criteria.md` の作成を含める
   （PoC 成立条件はすべて Yes / No で判定できる文にする）
-- 成果物の動作確認後、第1・2層を判定し `sprint-metrics.md` に記録する
+- discovery の完了条件に `eval-cases.md` の作成を含める
+  （代表ケース、境界ケース、失敗ケースを最低 1 件ずつ作る）
+- 成果物の動作確認後、第1・2層と eval-cases を判定し `sprint-metrics.md` に記録する
+- LLM 判定を使う場合は、実装担当とは別コンテキストの評価エージェントで判定する
+- 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない
+- 評価エージェントは `ID / 宣言済みの評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返す。未定義の観点を推測して減点せず、安全性・権限・送信・削除などの高影響操作に不明点があれば `Needs Review` とする
+- LLM 評価ごとに `projects/{プロジェクト名}/evaluation-runs/{run-id}/` を作り、オーケストレーターが返した agent ID と `fresh_context` を `receipt.json`、実際の依頼を `evaluator-input.md`、返答全文を `evaluator-result.md` に保存する
+- discovery では `harness/evals/catalog/` から案件に必要な項目だけを選び、acceptance criteria と eval cases を作る前に `eval-profile.md` へ ID と採用理由を記録する
+- 各 eval case には `構成・単体`、`連携`、`業務シナリオ` のテストレベルを付ける。`traceability.md` は複数機能、外部連携、高影響操作、または評価漏れが心配な案件だけで使う
+- 案件の学びが出た後は、AI に案件成果物から `promotion-candidates.md` を下書きさせる。AI は共通カタログを直接更新せず、人が承認した候補だけを昇格する
+- `Fix` は自動修正して再評価する。ただし自動修正は最大 2 回まで。3 回目の実装・評価には入らない
+- `Needs Review` が出た、同じ ID が 2 回連続で `Fix` になった、上限に達した、スコープ変更や評価基準変更が必要になった場合は自動ループを止める
+- デモ、レビュー、利用中に見つかった失敗は `findings.md` に残し、次回評価するケースとして `eval-cases.md` に戻す
 - 成果物に合わせて成立条件を後から緩めない。変更する場合は変更履歴に理由を残す
-- 記録は回数と Yes / No のみでよい。金額や正確な工数は書かない
+- 記録は回数と Yes / No と学びのみでよい。利用量の単価換算や正確な工数は書かない
 - 記録の記入がユーザーの負担にならないよう、埋められる項目は AI が下書きし、
   ユーザーには確認だけを求める
+
+## Evals の扱い
+
+- このハーネスでの evals は、本番投入可否を判定する重い評価基盤ではなく、超速スプリントの学習ループを再現可能にする軽量評価として扱う
+- `acceptance-criteria.md` を eval spec、`eval-cases.md` を軽量 dataset、`findings.md` を production flywheel の入口として使う
+- v1 では自動 grader や eval runner は作らない。人間または LLM が読んで判定できるケースを先に整える
+- LLM 判定では、実装時のコンテキストを持たない評価エージェントに `Pass / Fix / Needs Review`、根拠、不合格時の再現手順だけを返させる
