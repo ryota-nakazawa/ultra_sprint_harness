@@ -1,0 +1,27 @@
+{
+  "run_id": "20260714T123440Z-iteration-00",
+  "project": "rookie-connect",
+  "iteration": 0,
+  "evaluator_agent_id": "019f609f-3b89-7c11-96a5-1069f7e9ed2c",
+  "evaluator_nickname": "Raman",
+  "evaluation_kind": "independent_llm",
+  "spawned_by": "orchestrator",
+  "context_isolation": "fresh_context",
+  "allowed_inputs": [
+    "artifact",
+    "run-instructions",
+    "project-requirements.md",
+    "acceptance-criteria.md",
+    "eval-cases.md",
+    "eval-profile.md",
+    "traceability.md (when present)"
+  ],
+  "excluded_inputs": [
+    "implementation chat history",
+    "implementation rationale",
+    "unfinished-work explanations"
+  ],
+  "started_at": "2026-07-14T12:34:40Z",
+  "completed_at": "2026-07-14T12:35:36Z",
+  "verdict": "Needs Review"
+}

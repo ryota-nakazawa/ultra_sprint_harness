@@ -60,11 +60,13 @@
   （代表ケース、境界ケース、失敗ケースを最低 1 件ずつ作る）
 - 成果物の動作確認後、第1・2層と eval-cases を判定し `sprint-metrics.md` に記録する
 - LLM 判定を使う場合は、実装担当とは別コンテキストの評価エージェントで判定する
-- 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない
+- 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない
 - 評価エージェントは `ID / 宣言済みの評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返す。未定義の観点を推測して減点せず、安全性・権限・送信・削除などの高影響操作に不明点があれば `Needs Review` とする
 - LLM 評価ごとに `projects/{プロジェクト名}/evaluation-runs/{run-id}/` を作り、オーケストレーターが返した agent ID と `fresh_context` を `receipt.json`、実際の依頼を `evaluator-input.md`、返答全文を `evaluator-result.md` に保存する
+- 評価前に `evaluation-status.md` を作る。実装担当の自己確認は参考確認としてのみ扱い、独立 LLM 評価では `tools/check_evaluation_evidence.py` が成功するまで正式な `Pass / Fix / Needs Review` を記録しない。人間評価の場合は評価者を記録してから正式判定を記録する
 - discovery では `harness/evals/catalog/` から案件に必要な項目だけを選び、acceptance criteria と eval cases を作る前に `eval-profile.md` へ ID と採用理由を記録する
-- 各 eval case には `構成・単体`、`連携`、`業務シナリオ` のテストレベルを付ける。`traceability.md` は複数機能、外部連携、高影響操作、または評価漏れが心配な案件だけで使う
+- 各 eval case には `構成・単体`、`連携`、`業務シナリオ` のテストレベルを付ける。すべての案件で `traceability.md` を作り、中核要件の `REQ` を少なくとも 1 つの `C` と `E` に対応させる
+- Web App の独立評価では、評価サブエージェントが Playwright で通常の UI 操作を行い、コンソール・視覚確認の証跡を `playwright-evidence.md` に保存する。Playwright が動かない場合は `Pass` にせず `Needs Review` とする
 - 案件の学びが出た後は、AI に案件成果物から `promotion-candidates.md` を下書きさせる。AI は共通カタログを直接更新せず、人が承認した候補だけを昇格する
 - `Fix` は自動修正して再評価する。ただし自動修正は最大 2 回まで。3 回目の実装・評価には入らない
 - `Needs Review` が出た、同じ ID が 2 回連続で `Fix` になった、上限に達した、スコープ変更や評価基準変更が必要になった場合は自動ループを止める

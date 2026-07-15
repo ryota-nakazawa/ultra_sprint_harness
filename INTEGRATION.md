@@ -88,7 +88,7 @@ eval-cases.md は、重い自動評価基盤ではなく軽量な Evals ケー�
 4. `sprint-metrics.md` のセクション 1〜2（試行回数、一発合格、フォールバック、手戻り主因、eval-cases の結果）を記入する
 
 LLM で判定する項目は、実装担当とは別コンテキストの評価エージェントで行う。
-評価エージェントには、成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない。
+評価エージェントには、成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない。
 評価エージェントは、各項目について `ID / 宣言済みの評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返す。
 `acceptance-criteria.md` と `eval-cases.md` で宣言した評価観点だけを判定対象にし、未定義の品質を推測して減点しない。
 安全性・権限・送信・削除などの高影響操作に不明点があれば、`Fix` ではなく `Needs Review` とする。
@@ -97,6 +97,8 @@ LLM で判定する項目は、実装担当とは別コンテキストの評価�
 `projects/{プロジェクト名}/evaluation-runs/{run-id}/` を作る。起動 API が返した agent ID と
 `fresh_context` は `receipt.json`、実際の評価依頼は `evaluator-input.md`、返答全文は
 `evaluator-result.md` に保存する。評価ログだけでなく、独立サブエージェントの起動と入力制限を確認するための証跡として扱う。
+
+実装担当の自己確認は参考確認であり、正式な LLM 評価ではない。`evaluation-status.md` を作り、独立 LLM 評価では `python3 tools/check_evaluation_evidence.py --project-dir projects/{プロジェクト名}` が成功してからだけ、acceptance criteria と eval cases に正式判定を記録する。
 
 評価結果に `Fix` がある場合は、実装へ戻して修正し、再評価する。自動修正は最大 2 回まで。3 回目の実装・評価には入らない。
 `Needs Review` が 1 件でも出た場合、同じ ID が 2 回連続で `Fix` になった場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止める。
@@ -131,7 +133,7 @@ LLM で判定する項目は、実装担当とは別コンテキストの評価�
   （代表ケース、境界ケース、失敗ケースを最低 1 件ずつ作る）
 - 成果物の動作確認後、第1・2層と eval-cases を判定し `sprint-metrics.md` に記録する
 - LLM 判定を使う場合は、実装担当とは別コンテキストの評価エージェントで判定する
-- 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない
+- 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない
 - 評価エージェントは `ID / 宣言済みの評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返す。未定義の観点を推測して減点せず、高影響操作に不明点があれば `Needs Review` とする
 - `Fix` は自動修正して再評価する。ただし自動修正は最大 2 回まで。3 回目の実装・評価には入らない
 - `Needs Review` が出た、同じ ID が 2 回連続で `Fix` になった、上限に達した、スコープ変更や評価基準変更が必要になった場合は自動ループを止める
@@ -176,6 +178,8 @@ LLM で判定する項目は、実装担当とは別コンテキストの評価�
 `harness/evals/catalog/` を、自社で再利用する評価観点、ケースパターン、ドメインルールの選択元として置く。
 discovery では案件に必要な項目だけを選び、`projects/{プロジェクト名}/eval-profile.md` に選択 ID と採用理由を残す。
 
-`test-viewpoints.md` は Vモデル Lite のテスト観点カタログである。各 eval case には `構成・単体 / 連携 / 業務シナリオ` のテストレベルを付ける。複数機能、外部連携、高影響操作、または評価漏れが心配な案件だけは `traceability.md` を作り、中核要件（`REQ-01`）から acceptance criteria と eval cases への対応を記録する。
+`test-viewpoints.md` は Vモデル Lite のテスト観点カタログである。各 eval case には `構成・単体 / 連携 / 業務シナリオ` のテストレベルを付ける。すべての案件で `traceability.md` を作り、中核要件（`REQ-01`）から acceptance criteria と eval cases への対応を記録する。
+
+Web App の独立評価では Playwright を使って通常の UI 操作、コンソール確認、主要状態の視覚確認を行い、`evaluation-runs/{run-id}/playwright-evidence.md` に保存する。Playwright が実行できない場合、UI 操作を要する項目は `Needs Review` とする。
 
 案件内の失敗や学びは、まず `eval-cases.md` と `findings.md` に残す。AI はそれらと `eval-profile.md` を読んで `promotion-candidates.md` を下書きしてよいが、共通カタログは直接編集しない。人が承認した候補だけをカタログへ昇格する。

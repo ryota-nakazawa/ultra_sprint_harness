@@ -44,17 +44,28 @@
 
 1. `projects/{プロジェクト名}/` を作成する
 2. `project-requirements.md` に共通ディスカバリー結果を記録する
-3. 以下を短くユーザーに返し、合意を取る
+3. `harness/flows/evaluation-gate.md` を読み、実装前ゲートを満たすまで個別フローの実装ステップへ進まない
+4. 以下を短くユーザーに返し、合意を取る
    - 今回解く問題
    - 最小手段の提案
    - 作る範囲
    - 今は作らない範囲
-4. 対応するフロー定義を読み込む
+5. 対応するフロー定義を読み込む
    - Web App → `harness/flows/webapp.md`
    - Codex Skills → `harness/flows/codex-skills.md`
    - Workflow / ハーネス設計 → `harness/flows/harness-design.md`
    - GPTs → `harness/flows/gpts.md`
-5. 個別フローの Step 1 から開始する
+6. 個別フローの Step 1 から開始する
+
+## 実装前ゲート
+
+どのルートでも、実装に入る直前に次を実行する。
+
+```bash
+python3 tools/check_preimplementation_readiness.py --project-dir projects/{プロジェクト名}
+```
+
+失敗した場合は、評価項目、eval cases、traceability、evaluation-loop を先に直す。実装後に評価項目を作る運用は禁止する。
 
 ## デフォルト進行モード
 

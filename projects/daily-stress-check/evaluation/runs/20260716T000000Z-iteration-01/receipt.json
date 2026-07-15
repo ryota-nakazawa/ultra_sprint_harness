@@ -1,0 +1,19 @@
+{
+  "evaluation_kind": "independent_llm",
+  "evaluator_agent_id": "/root/independent_evaluation",
+  "context_isolation": "fresh_context",
+  "allowed_inputs": [
+    "artifact",
+    "run instructions",
+    "project-requirements.md",
+    "acceptance-criteria.md",
+    "eval-cases.md",
+    "eval-profile.md",
+    "traceability.md"
+  ],
+  "started_at": "2026-07-16T00:00:00Z",
+  "completed_at": "2026-07-16T00:01:00Z",
+  "verdict": "Needs Review",
+  "traceability_required": true,
+  "evaluation_scope": "codex_skill"
+}

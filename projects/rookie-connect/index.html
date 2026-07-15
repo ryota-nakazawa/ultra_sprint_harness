@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="新人のつながりを育てる社内SNSのローカルプロトタイプ" />
+    <title>Rookie Connect</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="メインナビゲーション">
+        <a class="brand" href="#top" aria-label="Rookie Connect ホーム">
+          <span class="brand-mark">R</span><span>Rookie<br />Connect</span>
+        </a>
+        <nav class="nav-list">
+          <a class="nav-item active" href="#top"><span>⌂</span>ホーム</a>
+          <a class="nav-item" href="#topics"><span>#</span>話題を探す</a>
+          <a class="nav-item" href="#members"><span>◎</span>同期を探す</a>
+          <a class="nav-item" href="#profile"><span>◯</span>プロフィール</a>
+        </nav>
+        <section class="sidebar-bottom">
+          <p class="eyebrow">はじめての方へ</p>
+          <p>まずは、今日あったことをひとこと。</p>
+          <button class="outline-button" id="quickCompose">投稿する</button>
+        </section>
+      </aside>
+
+      <main id="top" class="feed-area">
+        <header class="mobile-header">
+          <a class="brand" href="#top"><span class="brand-mark">R</span>Rookie Connect</a>
+          <button class="icon-button" aria-label="メニュー">☰</button>
+        </header>
+        <div class="feed-header">
+          <div>
+            <p class="eyebrow">2026年度 新入社員</p>
+            <h1>みんなの今</h1>
+          </div>
+          <div class="user-chip" id="profile">
+            <span class="avatar avatar-blue">佐</span>
+            <span>佐藤 花子</span>
+          </div>
+        </div>
+
+        <section class="composer" aria-labelledby="composer-title">
+          <div class="composer-top">
+            <span class="avatar avatar-blue">佐</span>
+            <label class="sr-only" for="postText">いまどうしてる？</label>
+            <textarea id="postText" maxlength="280" placeholder="いまどうしてる？"></textarea>
+          </div>
+          <div class="composer-footer">
+            <span id="charCount" class="char-count">0 / 280</span>
+            <span id="formMessage" class="form-message" role="status"></span>
+            <button id="postButton" class="primary-button" type="button" disabled>投稿する</button>
+          </div>
+        </section>
+
+        <div class="feed-title-row">
+          <h2 id="composer-title">タイムライン</h2>
+          <span>新しい順</span>
+        </div>
+        <section id="feed" class="feed" aria-label="投稿一覧"></section>
+      </main>
+
+      <aside class="right-rail">
+        <section id="topics" class="rail-section">
+          <div class="section-heading"><h2>いま話題</h2><a href="#topics">すべて見る</a></div>
+          <a class="topic" href="#top"><span>#</span><div><strong>同期ランチ</strong><small>24人が投稿中</small></div></a>
+          <a class="topic" href="#top"><span>#</span><div><strong>研修の学び</strong><small>18人が投稿中</small></div></a>
+          <a class="topic" href="#top"><span>#</span><div><strong>おすすめの本</strong><small>12人が投稿中</small></div></a>
+        </section>
+        <section id="members" class="rail-section">
+          <div class="section-heading"><h2>配属同期</h2><a href="#members">一覧</a></div>
+          <div class="member"><span class="avatar avatar-coral">田</span><div><strong>田中 美咲</strong><small>営業・東京</small></div><button class="follow" type="button">フォロー</button></div>
+          <div class="member"><span class="avatar avatar-mint">鈴</span><div><strong>鈴木 大輝</strong><small>開発・大阪</small></div><button class="follow" type="button">フォロー</button></div>
+          <div class="member"><span class="avatar avatar-yellow">山</span><div><strong>山本 健太</strong><small>企画・名古屋</small></div><button class="follow" type="button">フォロー</button></div>
+        </section>
+        <p class="local-note">これはローカル用のPoCです。投稿はこのブラウザ内だけで表示されます。</p>
+      </aside>
+    </div>
+    <template id="postTemplate">
+      <article class="post">
+        <header class="post-header">
+          <span class="avatar post-avatar"></span>
+          <div><strong class="post-author"></strong><small class="post-meta"></small></div>
+          <button class="more-button" aria-label="その他の操作">•••</button>
+        </header>
+        <p class="post-body"></p>
+        <div class="post-actions">
+          <button class="like-button" type="button"><span>♡</span><span class="like-label">いいね</span><b class="like-count"></b></button>
+          <button class="reply-button" type="button"><span>↩</span>返信 <b class="reply-count"></b></button>
+        </div>
+        <div class="reply-box" hidden>
+          <input class="reply-input" maxlength="140" placeholder="返信を書く…" aria-label="返信を書く" />
+          <button class="reply-submit" type="button">返信</button>
+        </div>
+        <div class="replies"></div>
+      </article>
+    </template>
+    <script src="app.js"></script>
+  </body>
+</html>

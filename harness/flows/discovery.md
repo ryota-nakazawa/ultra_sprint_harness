@@ -18,8 +18,10 @@
 
 - `projects/{プロジェクト名}/interview-summary.md` を前提とした整理結果
 - `projects/{プロジェクト名}/project-requirements.md`
-- `projects/{プロジェクト名}/eval-profile.md`
-- `projects/{プロジェクト名}/eval-cases.md`
+- `projects/{プロジェクト名}/evaluation/eval-profile.md`
+- `projects/{プロジェクト名}/evaluation/eval-cases.md`
+- `projects/{プロジェクト名}/evaluation/traceability.md`
+- `projects/{プロジェクト名}/evaluation/evaluation-loop.md`
 - 必要に応じて `projects/{プロジェクト名}/task-plan.md`
 - 必要に応じて `projects/{プロジェクト名}/progress.md`
 - 必要に応じて `projects/{プロジェクト名}/findings.md`
@@ -91,16 +93,23 @@
 「成立条件の確認」の最後に、次を行ってから routing に進む。
 
 1. `harness/templates/common/acceptance-criteria.md` を複製して
-   `projects/{プロジェクト名}/acceptance-criteria.md` を作る
+   `projects/{プロジェクト名}/evaluation/acceptance-criteria.md` を作る
 2. project-requirements.md の「PoC として何ができれば十分か」を、
    **Yes / No で判定できる文**に変換して第2層の表に書く（3〜7 項目）
    各条件には `業務成功 / 誤実行 / 安全性 / 再現性 / 運用負荷` の評価観点を 1 つ付ける
 3. 「このプロトで顧客のどんな意思決定を引き出したいか」を仮説欄に 1〜2 文で書く
-4. `harness/evals/catalog/` から今回必要な評価観点、ケースパターン、ドメインルール、テスト観点だけを選び、`harness/templates/common/eval-profile.md` を複製して `projects/{プロジェクト名}/eval-profile.md` に選択 ID と採用理由を記録する。カタログを使わない場合は理由を 1 行残す
+4. `harness/evals/catalog/` から今回必要な評価観点、ケースパターン、ドメインルール、テスト観点だけを選び、`harness/templates/common/eval-profile.md` を複製して `projects/{プロジェクト名}/evaluation/eval-profile.md` に選択 ID と採用理由を記録する。カタログを使わない場合は理由を 1 行残す
 5. 選択した項目を案件の状況に具体化して、`harness/templates/common/eval-cases.md` を複製して
-   `projects/{プロジェクト名}/eval-cases.md` を作る
+   `projects/{プロジェクト名}/evaluation/eval-cases.md` を作る
 6. 代表ケース、境界ケース、失敗ケースを最低 1 件ずつ、合計 3〜7 件で書く
-7. 複数機能、外部連携、高影響操作、または評価漏れが心配な案件では、`traceability.md` を作り、中核要件（`REQ-01` 形式）→ acceptance criterion → eval case の対応を記録する。単機能の軽い PoC では省略してよい
+7. `harness/templates/common/traceability.md` を複製して `projects/{プロジェクト名}/evaluation/traceability.md` を作り、中核要件（`REQ-01` 形式）→ acceptance criterion → eval case の対応を記録する。単機能の軽い PoC でも省略しない
+8. `harness/templates/common/evaluation-loop.md` を複製して `projects/{プロジェクト名}/evaluation/evaluation-loop.md` を作る。評価・修正・人間確認のたびに Mermaid と実行履歴を更新する
+9. `harness/flows/evaluation-gate.md` を読み、Gate A の実装前ゲートを満たしているか確認する
+10. 次のコマンドが成功するまで、個別フローの実装ステップへ進まない
+
+```bash
+python3 tools/check_preimplementation_readiness.py --project-dir projects/{プロジェクト名}
+```
 
 Yes / No の文に変換できない成立条件が残っている間は、曖昧さが残っているサイン。
 そのまま実装に進まず、短くユーザーに確認する。
@@ -109,6 +118,9 @@ Yes / No の文に変換できない成立条件が残っている間は、曖�
 eval-cases.md は、重い自動評価基盤ではなく軽量な Evals ケース集として扱う。
 初回は人間または LLM が読んで判定できる粒度で十分。自動 grader や runner は v1 では作らない。
 共通カタログは選択元であり、案件ファイルの代わりにはしない。選択内容は必ず `eval-profile.md` に残す。
+
+**禁止事項:** 成果物を作った後に、成果物に合わせて acceptance criteria や eval cases を初めて作る運用は禁止する。
+実装中に条件変更が必要になった場合は、変更履歴に理由を書き、人間確認を挟む。
 
 ## checkpoint の入れ方
 
@@ -140,7 +152,8 @@ eval-cases.md は、重い自動評価基盤ではなく軽量な Evals ケー�
 - `findings.md` — 調査メモ、意思決定、比較結果、未解決論点
 - `findings-diagrams/` — 図で残した方が伝わる内容の出力先
 
-単純な依頼では `project-requirements.md` だけでよい。
+単純な依頼でも実装に入る場合は Gate A の評価ファイル一式が必要。
+`project-requirements.md` だけでよいのは、discovery メモ段階または実装しない相談段階までとする。
 
 共通ディスカバリーで決めるべきことは次の通り：
 

@@ -12,7 +12,8 @@
 >
 > **評価観点**: 第2層の条件は `業務成功 / 誤実行 / 安全性 / 再現性 / 運用負荷` のどれを主に見るか分類する。
 > **評価の独立性**: LLM で判定する場合は、実装を担当したエージェントではなく、別コンテキストの評価エージェントに渡す。
-> 評価エージェントには成果物、実行手順、`project-requirements.md`、このファイル、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや言い訳は渡さない。
+> 評価エージェントには成果物、実行手順、`project-requirements.md`、このファイル、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや言い訳は渡さない。
+> **正式判定の前提**: 実装担当による自己確認は参考確認であり、正式な `Pass / Fix / Needs Review` ではない。独立 LLM 評価を使う場合は、`evaluation-status.md` の記録と評価証跡検査の成功後にだけ結果を記入する。
 
 ---
 

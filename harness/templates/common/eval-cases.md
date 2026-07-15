@@ -6,10 +6,10 @@
 >
 > 自動 grader や eval runner は v1 では前提にしない。人間または LLM が読んで判定できる粒度にする。
 > LLM で判定する場合は、実装を担当したエージェントではなく、別コンテキストの評価エージェントを使う。
-> 評価エージェントには成果物、実行手順、`acceptance-criteria.md`、このファイルだけを渡し、実装中の会話ログや背景説明は渡さない。
+> 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、このファイル、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない。
 > 自動ループは最大 2 回まで。3 回目の実装・評価には入らない。明確に直せる不合格だけ `Fix` とし、判断が必要なものは `Needs Review` として止める。
 
-> **評価起動の証跡**: 評価エージェントを起動したオーケストレーターは、各評価ごとに `evaluation-runs/{run-id}/` を作る。`receipt.json` には起動時に返された agent ID、`fresh_context`、許可した入力だけを記録し、`evaluator-input.md` と `evaluator-result.md` を保存する。
+> **評価起動の証跡**: 評価エージェントを起動したオーケストレーターは、各評価ごとに `evaluation/runs/{run-id}/` を作る。`receipt.json` には起動時に返された agent ID、`fresh_context`、許可した入力だけを記録し、`evaluator-input.md` と `evaluator-result.md` を保存する。
 
 ---
 
@@ -99,7 +99,7 @@ LLM 判定を使う場合は、評価エージェントに次だけを渡す。
 LLM 評価を実行した回数だけ、次の構成を作る。評価ログ本文だけでは、別コンテキストのサブエージェントが実際に起動した証明にならないためである。
 
 ```text
-evaluation-runs/
+evaluation/runs/
   {UTC timestamp}-iteration-{NN}/
     receipt.json
     evaluator-input.md
@@ -110,6 +110,8 @@ evaluation-runs/
 2. 起動 API が返した agent ID を `receipt.json` に記録する。
 3. 実際に渡した依頼文を `evaluator-input.md`、返答全文を `evaluator-result.md` に保存する。
 4. `completed_at` と最終判定を `receipt.json` に追記する。
+
+正式な `Pass / Fix / Needs Review` をこのファイルへ記録する前に、`python3 tools/check_evaluation_evidence.py --project-dir projects/{プロジェクト名}` を実行する。失敗時は、結果を `未判定` のままにし、`evaluation-status.md` に自己確認だけを記録する。
 
 ローカルの証跡は後から編集可能な運用ログであり、改ざん耐性は持たない。改ざん耐性が必要になった時だけ、CI 実行 ID や追記専用の外部ログへ移す。
 

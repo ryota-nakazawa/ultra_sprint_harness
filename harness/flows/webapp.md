@@ -6,6 +6,7 @@
 技術選定の負担をゼロにし、「何を作りたいか」だけに集中させる。
 
 このフローは、共通ディスカバリーで「最小解決手段は Web App」と決まった後に使う。
+評価成果物と評価runは必ず [評価ディレクトリ標準](../evaluation-layout.md) の `evaluation/` 配下に置く。
 複雑な実装では `planning-with-files` の考え方で、`task-plan.md` と `progress.md` を作って進める。
 実運用では `interview-summary.md` を読み、そこから画面、導線、制約を具体化する。
 デフォルトでは、画面像と PoC 範囲の確認が終わるまで実装に入らない。
@@ -124,6 +125,14 @@ Web App のベースデザインは、現行の NTT DATA ブランドを参照�
 
 ### Step 5: 実装（Codex が実行）
 
+実装に入る直前に、共通の [評価ゲート](./evaluation-gate.md) の Gate A を必ず通す。
+
+```bash
+python3 tools/check_preimplementation_readiness.py --project-dir projects/{プロジェクト名}
+```
+
+失敗した場合は実装しない。`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、`traceability.md`、`evaluation-loop.md` を先に直す。
+
 1. `projects/{プロジェクト名}/` にフロントエンドを作成する
 2. API 処理やバックエンド仲介が必要な場合だけ Node.js を追加する
 3. コア機能から実装開始する（最重要機能を最初に）
@@ -144,15 +153,22 @@ Web App のベースデザインは、現行の NTT DATA ブランドを参照�
 
 ### Step 6.5: 合否判定と記録
 
-1. `projects/{プロジェクト名}/acceptance-criteria.md` の第1層・第2層を判定し、
+共通の [評価ゲート](./evaluation-gate.md) の Gate B〜D に従う。
+正式評価はサブエージェント前提で実施する。自己確認だけで `Pass / Fix / Needs Review` を記録してはいけない。
+
+1. `projects/{プロジェクト名}/evaluation-status.md` を作り、自己確認、正式評価の方式、正式判定の記録可否を記入する。自己確認は参考確認としてのみ残す
+2. 評価サブエージェントを `fresh_context` で起動し、`evaluation-runs/{run-id}/` に証跡を保存する。Web App では Playwright で主要導線を実際に操作し、コンソール確認、主要状態の視覚確認、探索操作の結果を `playwright-evidence.md` に保存する
+3. `python3 tools/check_evaluation_evidence.py --project-dir projects/{プロジェクト名} --run-id {run-id}` を実行する。失敗した場合は正式判定を記録せず、`evaluation-status.md` に未実施または不完全と残す
+4. 証跡検査が成功した後にだけ、`projects/{プロジェクト名}/acceptance-criteria.md` の第1層・第2層を判定し、
    結果と判定日を記入する
-2. `projects/{プロジェクト名}/eval-cases.md` のケースを判定し、
+5. `projects/{プロジェクト名}/eval-cases.md` のケースを判定し、
    代表ケース、境界ケース、失敗ケースのどこが弱いかを記録する
-3. 判定サマリー（合格数・一発合格の Yes/No）を埋める
-4. `sprint-metrics.md` のセクション 1〜2（試行回数、一発合格、フォールバック、手戻り主因、eval-cases の結果）を記入する
+6. 判定サマリー（合格数・一発合格の Yes/No）を埋める
+7. `sprint-metrics.md` のセクション 1〜2（試行回数、一発合格、フォールバック、手戻り主因、eval-cases の結果）を記入する
+8. `evaluation-loop.md` に run ID、Playwright 実行、判定、次の動きを Mermaid と実行履歴で追記する
 
 LLM で判定する項目は、実装担当とは別コンテキストの評価エージェントで行う。
-評価エージェントには、成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない。
+評価エージェントには、成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない。
 評価エージェントは、各項目について `ID / 評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返す。`acceptance-criteria.md` と `eval-cases.md` で宣言された評価観点だけを判定対象にし、安全性・権限・送信・削除などの高影響操作に不明点があれば `Needs Review` とする。
 
 評価エージェントの起動時には `projects/{プロジェクト名}/evaluation-runs/{run-id}/` を作る。起動 API が返した agent ID と `fresh_context` を `receipt.json` に、実際の評価依頼を `evaluator-input.md` に、返答全文を `evaluator-result.md` に保存する。これらが、評価を別サブエージェントで実施した監査証跡になる。

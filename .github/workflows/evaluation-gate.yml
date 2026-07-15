@@ -1,0 +1,16 @@
+name: Evaluation Gate
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  formal-evaluation-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Check formal evaluation evidence
+        run: python3 tools/check_formal_evaluation_gate.py

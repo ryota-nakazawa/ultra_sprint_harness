@@ -1,6 +1,7 @@
 # Evaluator Input
 
 > This file is the exact evaluation request given to the separate evaluator. Do not include implementation chat history or rationale.
+> This file is mandatory evidence for formal `Pass / Fix / Needs Review`. Without a completed fresh-context subagent run, no formal verdict may be recorded.
 
 ## Artifact
 
@@ -16,7 +17,7 @@
 - `acceptance-criteria.md`
 - `eval-cases.md`
 - `eval-profile.md`
-- `traceability.md` when present
+- `traceability.md`
 
 ## Evaluation Dimensions
 
@@ -28,7 +29,19 @@ Use the evaluation dimension declared for each acceptance criterion and eval cas
 
 ## Traceability Check
 
-When `traceability.md` is present, check that every `Must` requirement has at least one linked acceptance criterion and eval case. A missing link is `Needs Review`; do not invent a missing requirement or case.
+`traceability.md` is required. Check that every `Must` requirement has at least one linked acceptance criterion and eval case. A missing link is `Needs Review`; do not invent a missing requirement or case.
+
+## Web App User-Journey Evaluation
+
+For a Web App, use Playwright and normal browser input before returning a verdict. Build a QA inventory from the requirements, acceptance criteria, eval cases, visible controls, and user-visible claims. Then:
+
+- execute every applicable eval case with real clicks, typing, or touch input
+- capture browser console errors during the primary flow
+- inspect the initial screen and at least one meaningful post-interaction screen at desktop viewport; inspect a mobile viewport when the project claims mobile support
+- complete a short exploratory pass outside the happy path
+- record the inventory, environment, actions, visible outcomes, console result, and screenshot references in `playwright-evidence.md`
+
+If Playwright cannot run, return `Needs Review` for every case that requires UI interaction. Source inspection is supporting evidence only and cannot replace a user-journey evaluation.
 
 ## Required Response
 

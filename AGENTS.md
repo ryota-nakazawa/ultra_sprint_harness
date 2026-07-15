@@ -15,14 +15,36 @@ Start from the interview summary markdown, run lightweight discovery on top of i
 2. Read `projects/{project_name}/interview-summary.md` if it exists.
 3. Start with [harness/flows/discovery.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/discovery.md).
 4. Create or update `projects/{project_name}/project-requirements.md`.
-5. Use [harness/router.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/router.md) to choose the smallest viable path.
-6. Follow exactly one detailed flow:
+5. Create or update `evaluation/acceptance-criteria.md`, `evaluation/eval-profile.md`, `evaluation/eval-cases.md`, `evaluation/traceability.md`, and `evaluation/evaluation-loop.md` before implementation.
+6. Run `python3 tools/check_preimplementation_readiness.py --project-dir projects/{project_name}`. Do not implement until it passes.
+7. Use [harness/router.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/router.md) to choose the smallest viable path.
+8. Follow exactly one detailed flow:
    - [harness/flows/webapp.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/webapp.md)
    - [harness/flows/codex-skills.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/codex-skills.md)
    - [harness/flows/gpts.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/gpts.md)
    - [harness/flows/harness-design.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/harness-design.md)
 
 ## Core Rules
+
+## Evaluation Layout
+
+Keep project evaluation material under `projects/{project_name}/evaluation/`; do not place evaluation Markdown next to implementation files.
+
+```text
+evaluation/
+  acceptance-criteria.md
+  eval-profile.md
+  eval-cases.md
+  traceability.md
+  evaluation-loop.md
+  evaluation-status.md
+  sprint-metrics.md
+  promotion-candidates.md
+  runs/{run-id}/
+```
+
+- `project-requirements.md`, implementation files, and `findings.md` remain at the project root.
+- All tool arguments continue to use `--project-dir projects/{project_name}`; tools resolve the `evaluation/` directory themselves.
 
 - Treat `interview-summary.md` as the default input artifact.
 - Keep discovery light.
@@ -31,13 +53,20 @@ Start from the interview summary markdown, run lightweight discovery on top of i
 - Use file-based planning for anything non-trivial.
 - Record important decisions instead of keeping them only in chat context.
 - Treat evals as lightweight loop engineering: use acceptance criteria and eval cases to make learning reproducible, not as a heavy production eval platform.
+- Evaluation design comes before implementation. Do not create or backfill acceptance criteria and eval cases after the artifact just to match what was built.
+- Run `tools/check_preimplementation_readiness.py` before entering any implementation step. If it fails, fix the evaluation artifacts first.
 - Do not introduce automatic graders or eval runners by default; first create human/LLM-readable eval cases.
 - When LLM judgment is used, use a separate evaluation agent/context from the implementation agent.
-- Give the evaluation agent only the artifact, run instructions, `project-requirements.md`, `acceptance-criteria.md`, `eval-cases.md`, `eval-profile.md`, and `traceability.md` when present; do not include implementation chat history, rationale, or excuses.
+- Formal evaluation is subagent-mandatory. Implementation self-checks are only debugging/reference notes and never count as formal `Pass / Fix / Needs Review`.
+- Do not record formal `Pass / Fix / Needs Review` unless `tools/check_formal_evaluation_gate.py` and `tools/check_evaluation_evidence.py --run-id ...` pass for a completed `fresh_context` evaluator subagent run.
+- Give the evaluation agent only the artifact, run instructions, `project-requirements.md`, `acceptance-criteria.md`, `eval-cases.md`, `eval-profile.md`, and required `traceability.md`; do not include implementation chat history, rationale, or excuses.
 - The evaluation agent returns ID, declared evaluation dimension, `Pass / Fix / Needs Review`, evidence, and reproduction steps for failures. Judge only declared dimensions; treat uncertainty about safety, permissions, sending, deletion, or other high-impact actions as `Needs Review`.
-- For every LLM evaluation, create `projects/{project_name}/evaluation-runs/{run_id}/`. Save the agent ID returned by the orchestrator and `fresh_context` in `receipt.json`, the exact request in `evaluator-input.md`, and the full response in `evaluator-result.md`.
+- For every LLM evaluation, create `projects/{project_name}/evaluation/runs/{run_id}/`. Save the agent ID returned by the orchestrator and `fresh_context` in `receipt.json`, the exact request in `evaluator-input.md`, and the full response in `evaluator-result.md`.
+- Create `evaluation/evaluation-status.md` before evaluation. Treat implementation self-checks as reference only; do not record formal `Pass / Fix / Needs Review` until `tools/check_evaluation_evidence.py` passes for an independent LLM evaluation and `tools/check_formal_evaluation_gate.py` passes.
 - During discovery, select only relevant entries from `harness/evals/catalog/` and snapshot the IDs and rationale in `eval-profile.md` before creating acceptance criteria and eval cases.
-- Give each eval case a test level: `構成・単体`, `連携`, or `業務シナリオ`. Use `traceability.md` only for multi-feature, external-integration, high-impact, or coverage-risk projects.
+- Give each eval case a test level: `構成・単体`, `連携`, or `業務シナリオ`. Create `traceability.md` for every project and link every core `REQ` to at least one `C` and `E`.
+- For Web App evaluation, the independent agent must use Playwright with normal UI input, capture console and visual evidence in `playwright-evidence.md`, and return `Needs Review` rather than Pass when Playwright cannot run.
+- Create and maintain `evaluation-loop.md` for every project. It must include a Mermaid loop diagram and each evaluation run ID, verdict, and next action before evidence validation.
 - After project learnings emerge, have AI draft `promotion-candidates.md` from the project artifacts. AI must not edit the common catalog directly; only a human-approved candidate is promoted.
 - Auto-fix only `Fix` items, with a maximum of 2 implementation/evaluation loops; do not start a third implementation/evaluation loop.
 - Stop the loop when any `Needs Review` appears, the same ID is marked `Fix` twice in a row, the loop reaches 2 fixes, or the fix requires scope or criteria changes.
@@ -195,11 +224,14 @@ Diagrams complement `findings.md`; they do not replace it.
   （代表ケース、境界ケース、失敗ケースを最低 1 件ずつ作る）
 - 成果物の動作確認後、第1・2層と eval-cases を判定し `sprint-metrics.md` に記録する
 - LLM 判定を使う場合は、実装担当とは別コンテキストの評価エージェントで判定する
-- 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない
+- 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない
 - 評価エージェントは `ID / 宣言済みの評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返す。未定義の観点を推測して減点せず、安全性・権限・送信・削除などの高影響操作に不明点があれば `Needs Review` とする
 - LLM 評価ごとに `projects/{プロジェクト名}/evaluation-runs/{run-id}/` を作り、オーケストレーターが返した agent ID と `fresh_context` を `receipt.json`、実際の依頼を `evaluator-input.md`、返答全文を `evaluator-result.md` に保存する
+- 評価前に `evaluation-status.md` を作る。実装担当の自己確認は参考確認としてのみ扱い、独立 LLM 評価では `tools/check_evaluation_evidence.py` が成功するまで正式な `Pass / Fix / Needs Review` を記録しない。人間評価の場合は評価者を記録してから正式判定を記録する
 - discovery では `harness/evals/catalog/` から案件に必要な項目だけを選び、acceptance criteria と eval cases を作る前に `eval-profile.md` へ ID と採用理由を記録する
-- 各 eval case には `構成・単体`、`連携`、`業務シナリオ` のテストレベルを付ける。`traceability.md` は複数機能、外部連携、高影響操作、または評価漏れが心配な案件だけで使う
+- 各 eval case には `構成・単体`、`連携`、`業務シナリオ` のテストレベルを付ける。すべての案件で `traceability.md` を作り、中核要件の `REQ` を少なくとも 1 つの `C` と `E` に対応させる
+- Web App の独立評価では、評価サブエージェントが Playwright で通常の UI 操作を行い、コンソール・視覚確認の証跡を `playwright-evidence.md` に保存する。Playwright が動かない場合は `Pass` にせず `Needs Review` とする
+- すべての案件で `evaluation-loop.md` を作成・更新する。Mermaid のループ図と、各評価の run ID、判定、次の動きを証跡検査前に記録する
 - 案件の学びが出た後は、AI に案件成果物から `promotion-candidates.md` を下書きさせる。AI は共通カタログを直接更新せず、人が承認した候補だけを昇格する
 - `Fix` は自動修正して再評価する。ただし自動修正は最大 2 回まで。3 回目の実装・評価には入らない
 - `Needs Review` が出た、同じ ID が 2 回連続で `Fix` になった、上限に達した、スコープ変更や評価基準変更が必要になった場合は自動ループを止める

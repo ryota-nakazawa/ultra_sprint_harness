@@ -1,0 +1,30 @@
+{
+  "run_id": "20260715T151556Z-iteration-00",
+  "project": "project-pulse",
+  "iteration": 0,
+  "evaluator_agent_id": "/root/independent_evaluator",
+  "evaluation_kind": "independent_llm",
+  "evaluation_scope": "web_app",
+  "traceability_required": true,
+  "ui_evaluation": {
+    "required": true,
+    "tool": "Playwright",
+    "status": "completed",
+    "evidence_file": "playwright-evidence.md"
+  },
+  "spawned_by": "orchestrator",
+  "context_isolation": "fresh_context",
+  "allowed_inputs": [
+    "artifact",
+    "run-instructions",
+    "project-requirements.md",
+    "acceptance-criteria.md",
+    "eval-cases.md",
+    "eval-profile.md",
+    "traceability.md"
+  ],
+  "excluded_inputs": ["implementation chat history", "implementation rationale", "unfinished-work explanations"],
+  "started_at": "2026-07-15T15:15:56Z",
+  "completed_at": "2026-07-15T15:21:00Z",
+  "verdict": "Pass"
+}

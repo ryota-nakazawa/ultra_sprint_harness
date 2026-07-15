@@ -5,7 +5,7 @@
 ## 使い方
 
 1. discovery で案件要件を読み、必要な項目だけ選ぶ。
-2. 選択した ID、版、採用理由を `projects/{project}/eval-profile.md` に記録する。
+2. 選択した ID、版、採用理由を `projects/{project}/evaluation/eval-profile.md` に記録する。
 3. 選択内容を案件固有の `acceptance-criteria.md` と `eval-cases.md` に具体化する。
 4. 案件内で出た失敗はまず案件内に残す。再利用価値がある場合だけ AI が `promotion-candidates.md` に候補を作る。
 5. 人が承認した候補だけをこのカタログへ反映する。

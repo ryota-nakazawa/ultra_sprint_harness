@@ -1,0 +1,4 @@
+interface:
+  display_name: "日記ストレスチェック"
+  short_description: "日記から安全にストレス傾向を振り返るセルフチェック"
+  default_prompt: "$daily-stress-check を使って、今日の日記をストレスセルフチェックしてください。"

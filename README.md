@@ -6,12 +6,17 @@ Codex を使って、非エンジニアでも短時間でプロトタイプを�
 
 1. 何を解くかを短く整理する
 2. 何で解くのが最小かを決める
-3. 重要な分岐だけユーザーと確認する
-4. その後に適切なフローへ進む
+3. 実装前に acceptance criteria、eval cases、traceability を作る
+4. 重要な分岐だけユーザーと確認する
+5. その後に適切なフローへ進む
+6. 成果物を実装したら、自己確認ではなく独立サブエージェントで正式評価する
 
 という進め方を前提にしています。
 成果物の評価は、重い自動評価基盤ではなく、`acceptance-criteria.md` と `eval-cases.md` を使った軽量 Evals として扱います。
 失敗や違和感は `findings.md` に残し、次スプリントの評価ケースへ戻します。
+正式な `Pass / Fix / Needs Review` は、必ず `fresh_context` の評価サブエージェントで実施します。自己確認だけの判定は正式評価として扱いません。
+
+評価ファイルはプロジェクト直下へ散在させず、すべて `projects/{project}/evaluation/` にまとめます。要件・実装・findings はプロジェクト直下に残し、評価条件、ケース、トレーサビリティ、ステータス、メトリクス、実行証跡は `evaluation/` 配下で管理します。
 
 ハーネスやプロトタイプの修正は、基本的に作業ブランチまたは Git worktree で試し、良さそうなものだけ `main` に統合する運用を前提にします。
 
@@ -51,12 +56,14 @@ Codex を使って、非エンジニアでも短時間でプロトタイプを�
 4. `projects/{プロジェクト名}/project-requirements.md` に理解したことと曖昧な点を書く
 5. [harness/router.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/router.md) を見て最小手段を提案する
 6. その手段で進めてよいか確認する
-7. 該当するフロー1つだけを読む
-8. 必要なら `task-plan.md` と `progress.md` を追加する
+7. `python3 tools/check_preimplementation_readiness.py --project-dir projects/{プロジェクト名}` を通す
+8. 該当するフロー1つだけを読む
+9. 必要なら `task-plan.md` と `progress.md` を追加する
 
 ### 何を書き始めればよいか
 
-最初は `interview-summary.md` と `project-requirements.md` があれば十分です。
+最初の discovery メモ段階では `interview-summary.md` と `project-requirements.md` があれば十分です。
+ただし実装に入る場合は、Gate A の評価ファイル一式が必要です。
 
 `interview-summary.md` には次のような項目が入っていれば使いやすいです。
 
@@ -86,8 +93,9 @@ Codex を使って、非エンジニアでも短時間でプロトタイプを�
 ```mermaid
 flowchart TD
     A["interview-summary.md を受け取る"] --> B["共通ディスカバリー<br/>目的整理 / 曖昧さ整理 / 成立条件の確認"]
-    B --> C["project-requirements.md / acceptance-criteria.md / eval-cases.md を作成"]
-    C --> D{"手段を決める前に確認が必要か？"}
+    B --> C["project-requirements.md / acceptance-criteria.md / eval-cases.md / traceability.md を作成"]
+    C --> C2["実装前ゲート<br/>check_preimplementation_readiness.py"]
+    C2 --> D{"手段を決める前に確認が必要か？"}
     D -->|はい| E["曖昧な点を 3 点以内で確認"]
     D -->|いいえ| F{"最小解決手段は何か？"}
     E --> F
@@ -104,11 +112,13 @@ flowchart TD
     M --> P
     N --> P
     O --> P
-    P --> Q["acceptance-criteria / eval-cases を判定"]
-    Q --> R["初回 findings を整理して図にする"]
-    R --> S["プロト完成後に構造理解を整理"]
-    S --> T["顧客フィードバックを反映"]
-    T --> U["失敗ケースを eval-cases に戻す"]
+    P --> Q["独立評価サブエージェント<br/>fresh_context"]
+    Q --> Q2["評価証跡検査<br/>check_evaluation_evidence.py"]
+    Q2 --> R["acceptance-criteria / eval-cases を正式判定"]
+    R --> S["初回 findings を整理して図にする"]
+    S --> T["プロト完成後に構造理解を整理"]
+    T --> U["顧客フィードバックを反映"]
+    U --> V["失敗ケースを eval-cases に戻す"]
 ```
 
 ### Web App の流れ
@@ -171,9 +181,19 @@ flowchart TD
 - 曖昧さの整理
 - 成立条件の確認
 - eval ケースの初期作成
+- traceability と evaluation-loop の初期作成
+- 実装前ゲートの実行
 
 この段階では詳細を詰めすぎません。分からないことは `TBD` として残します。
 ただし、手段の選定や PoC 成立条件に直結する曖昧さは、そのまま流さず短く確認します。
+
+実装前ゲート:
+
+```bash
+python3 tools/check_preimplementation_readiness.py --project-dir projects/{プロジェクト名}
+```
+
+このコマンドが失敗する間は、成果物の実装に進みません。
 
 ### 2. ルーティング
 
@@ -192,6 +212,10 @@ flowchart TD
 - Codex Skills: [harness/flows/codex-skills.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/codex-skills.md)
 - GPTs: [harness/flows/gpts.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/gpts.md)
 - Workflow / ハーネス設計: [harness/flows/harness-design.md](/Users/ryota/Desktop/エージェント作成/超速スプリント/harness/flows/harness-design.md)
+
+全ルート共通の評価ゲートは [harness/flows/evaluation-gate.md](/Users/ryota/Desktop/dev/evals_test/ultra_sprint_harness/harness/flows/evaluation-gate.md) にあります。
+正式評価は、実装担当の自己確認ではなく、`fresh_context` の独立サブエージェントで実施します。
+正式判定を書いたプロジェクトにサブエージェント証跡がない場合、`python3 tools/check_formal_evaluation_gate.py`、pre-commit hook、GitHub Actions が失敗します。
 
 ## ディレクトリ構成
 
@@ -374,7 +398,7 @@ Workflow / ハーネス設計フローは、AI への指示フローそのもの
 - `eval-profile.md`: 今回選んだカタログ項目と採用理由を残す案件ごとのスナップショット
 - `promotion-candidates.md`: AI が案件の学びから作る共通カタログへの昇格候補。人の承認前にカタログは更新しない
 - `test-viewpoints.md`: 正常系、境界、異常、状態遷移などを案件で選ぶ Vモデル Lite の観点カタログ
-- `traceability.md`: 必要な案件だけで使う、中核要件 → acceptance criterion → eval case の対応表
+- `traceability.md`: 全案件で使う、中核要件 → acceptance criterion → eval case の対応表
 
 ループは次の 3 段で扱います。
 
@@ -399,26 +423,30 @@ flowchart TD
   J --> B
 ```
 
-評価サブエージェントは実装時の会話を引き継がない `fresh_context` で起動する。起動 ID、実際に渡した依頼、返答全文は `evaluation-runs/{run-id}/` に保存する。
+評価サブエージェントは実装時の会話を引き継がない `fresh_context` で起動する。起動 ID、実際に渡した依頼、返答全文は `evaluation/runs/{run-id}/` に保存する。
+
+Web App の評価サブエージェントは、ソース確認だけで合格にしない。Playwright で実際にクリック・入力して主要導線を操作し、コンソール、主要状態の見た目、探索操作を `playwright-evidence.md` に残す。Playwright が実行できない場合、UI 操作を要する項目は `Needs Review` とする。
+
+自己確認と正式評価は分ける。実装担当の構文確認・動作確認は `evaluation-status.md` の参考確認として残すが、正式な `Pass / Fix / Needs Review` ではない。独立 LLM 評価を使う場合は、評価証跡を保存してから `python3 tools/check_evaluation_evidence.py --project-dir projects/{project}` を実行し、成功後にだけ正式判定を acceptance criteria、eval cases、sprint metrics へ記録する。
 
 ### Vモデル Lite とテスト観点の役割
 
 | 目的 | このハーネスで使うもの | いつ使うか |
 |---|---|---|
-| 要件と評価の対応漏れを防ぐ（Vモデル Lite） | `traceability.md` の `REQ → acceptance criterion → eval case` | 複数機能、外部連携、高影響操作、評価漏れが心配な案件だけ |
+| 要件と評価の対応漏れを防ぐ（Vモデル Lite） | `traceability.md` の `REQ → acceptance criterion → eval case` | すべての案件。中核要件だけを対象にする |
 | 評価の切り口を選ぶ（TERASOLUNA 的な観点管理） | `test-viewpoints.md`、`dimensions.md`、`case-patterns.md`、`domain-rules.md` | discovery で案件に必要なものだけ選ぶ |
 | 組織知として育てる | `promotion-candidates.md` | 案件の失敗・学びが出た時だけ。人の承認後にカタログへ昇格 |
 
 discovery では `harness/evals/catalog/` から案件に必要な部品だけを選び、`eval-profile.md` に選択 ID と採用理由を残してから案件固有の acceptance criteria と eval cases を作る。案件内の失敗はまず案件内に残し、AI が再利用できると判断したものだけを `promotion-candidates.md` に下書きする。人が承認した候補だけを共通カタログへ昇格する。
 
-Vモデルの対応関係は軽量に扱う。各 eval case には `構成・単体 / 連携 / 業務シナリオ` のテストレベルを付ける。複数機能、外部連携、高影響操作、または評価漏れが心配な案件だけは `traceability.md` を作り、中核要件（`REQ-01`）から acceptance criteria と eval cases への対応を確認する。
+Vモデルの対応関係は軽量に扱う。各 eval case には `構成・単体 / 連携 / 業務シナリオ` のテストレベルを付け、すべての案件で `traceability.md` を作る。中核要件（`REQ-01`）ごとに acceptance criteria と eval cases を対応させるため、評価漏れを確認できる。
 
 v1 では自動 grader や eval runner は作りません。人間または LLM が読んで判定できるケースを先に整えます。
 LLM で判定する場合は、実装担当とは別コンテキストの評価エージェントを使います。
-評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必要時の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡しません。
+評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡しません。
 評価エージェントは、各項目について `ID / 評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返します。`acceptance-criteria.md` と `eval-cases.md` で宣言した評価観点だけを判定対象にし、未定義の品質を推測して減点しません。安全性・権限・送信・削除などの高影響操作に不明点があれば `Needs Review` とします。
 
-各 LLM 評価では `projects/{project}/evaluation-runs/{run-id}/` を作り、オーケストレーターが返した評価 agent ID、`fresh_context`、許可した入力を `receipt.json` に保存します。実際に送った依頼文は `evaluator-input.md`、返答全文は `evaluator-result.md` に保存します。これにより、評価ログだけでなく「別サブエージェントを起動して判定した」ことを確認できます。ローカル記録は監査用の運用証跡であり、改ざん耐性が必要になった段階で CI または追記専用の外部ログへ移します。
+各 LLM 評価では `projects/{project}/evaluation/runs/{run-id}/` を作り、オーケストレーターが返した評価 agent ID、`fresh_context`、許可した入力を `receipt.json` に保存します。実際に送った依頼文は `evaluator-input.md`、返答全文は `evaluator-result.md` に保存します。これにより、評価ログだけでなく「別サブエージェントを起動して判定した」ことを確認できます。ローカル記録は監査用の運用証跡であり、改ざん耐性が必要になった段階で CI または追記専用の外部ログへ移します。
 
 評価結果に `Fix` がある場合は、実装へ戻して修正し、再評価します。
 自動修正は最大 2 回までです。3 回目の実装・評価には入りません。

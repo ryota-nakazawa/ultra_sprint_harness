@@ -1,0 +1,27 @@
+{
+  "name": "ultra_sprint_harness",
+  "version": "1.0.0",
+  "description": "Codex を使って、非エンジニアでも短時間でプロトタイプを作りやすくするためのハーネスです。",
+  "main": "index.js",
+  "scripts": {
+    "check:preimplementation": "python3 tools/check_preimplementation_readiness.py",
+    "check:evaluation-evidence": "python3 tools/check_evaluation_evidence.py",
+    "check:formal-evaluation": "python3 tools/check_formal_evaluation_gate.py",
+    "test": "python3 -m py_compile tools/check_preimplementation_readiness.py tools/check_evaluation_evidence.py tools/create_evaluation_run.py tools/check_formal_evaluation_gate.py && python3 tools/check_formal_evaluation_gate.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryota-nakazawa/ultra_sprint_harness.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ryota-nakazawa/ultra_sprint_harness/issues"
+  },
+  "homepage": "https://github.com/ryota-nakazawa/ultra_sprint_harness#readme",
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

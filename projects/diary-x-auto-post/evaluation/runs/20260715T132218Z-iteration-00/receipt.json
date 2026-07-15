@@ -1,0 +1,35 @@
+{
+  "run_id": "20260715T132218Z-iteration-00",
+  "project": "diary-x-auto-post",
+  "iteration": 0,
+  "evaluator_agent_id": "019f65f1-2d3e-70d2-9bde-87d9d531d83e",
+  "evaluator_nickname": "Hooke",
+  "evaluation_kind": "independent_llm",
+  "evaluation_scope": "non_ui",
+  "traceability_required": true,
+  "ui_evaluation": {
+    "required": false,
+    "tool": null,
+    "status": "not_required",
+    "evidence_file": null
+  },
+  "spawned_by": "orchestrator",
+  "context_isolation": "fresh_context",
+  "allowed_inputs": [
+    "artifact",
+    "run-instructions",
+    "project-requirements.md",
+    "acceptance-criteria.md",
+    "eval-cases.md",
+    "eval-profile.md",
+    "traceability.md"
+  ],
+  "excluded_inputs": [
+    "implementation chat history",
+    "implementation rationale",
+    "unfinished-work explanations"
+  ],
+  "started_at": "2026-07-15T13:22:18Z",
+  "completed_at": "2026-07-15T13:22:47Z",
+  "verdict": "Pass"
+}

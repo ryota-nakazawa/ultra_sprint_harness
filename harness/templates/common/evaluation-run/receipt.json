@@ -4,6 +4,15 @@
   "iteration": 0,
   "evaluator_agent_id": "{agent ID returned by the orchestrator}",
   "evaluator_nickname": "{optional nickname}",
+  "evaluation_kind": "independent_llm",
+  "evaluation_scope": "web_app | non_ui",
+  "traceability_required": true,
+  "ui_evaluation": {
+    "required": true,
+    "tool": "Playwright",
+    "status": "pending | completed | not_required",
+    "evidence_file": "playwright-evidence.md"
+  },
   "spawned_by": "orchestrator",
   "context_isolation": "fresh_context",
   "allowed_inputs": [
