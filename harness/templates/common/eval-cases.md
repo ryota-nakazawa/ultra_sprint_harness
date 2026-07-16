@@ -9,7 +9,7 @@
 > 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、このファイル、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない。
 > 自動ループは最大 2 回まで。3 回目の実装・評価には入らない。明確に直せる不合格だけ `Fix` とし、判断が必要なものは `Needs Review` として止める。
 
-> **評価起動の証跡**: 評価エージェントを起動したオーケストレーターは、各評価ごとに `evaluation/runs/{run-id}/` を作る。`receipt.json` には起動時に返された agent ID、`fresh_context`、許可した入力だけを記録し、`evaluator-input.md` と `evaluator-result.md` を保存する。
+> **評価起動の証跡**: 評価エージェントを起動したオーケストレーターは、各評価ごとに `evaluation/runs/{run-id}/` を作る。`receipt.json` には起動時に返された agent ID、`fresh_context`、許可した入力に加え、評価時点の commit / 入力 / 成果物 hash とモデル設定を記録し、`evaluator-input.md` と `evaluator-result.md` を保存する。
 
 ---
 
@@ -110,6 +110,15 @@ evaluation/runs/
 2. 起動 API が返した agent ID を `receipt.json` に記録する。
 3. 実際に渡した依頼文を `evaluator-input.md`、返答全文を `evaluator-result.md` に保存する。
 4. `completed_at` と最終判定を `receipt.json` に追記する。
+
+新規runは、次の補助コマンドで receipt の再現情報を先に作れる。`--artifact` は評価対象の成果物ファイルを 1 件以上指定する。
+
+```bash
+python3 tools/create_evaluation_run.py \
+  --project-dir projects/{プロジェクト名} --iteration 1 --agent-id {agent-id} --scope non_ui \
+  --model {model} --temperature 0 --prompt-version prompt-v1 --rubric-version rubric-v1 \
+  --artifact path/to/artifact
+```
 
 正式な `Pass / Fix / Needs Review` をこのファイルへ記録する前に、`python3 tools/check_evaluation_evidence.py --project-dir projects/{プロジェクト名}` を実行する。失敗時は、結果を `未判定` のままにし、`evaluation-status.md` に自己確認だけを記録する。
 

@@ -11,6 +11,18 @@
 | カタログ参照先 | `harness/evals/catalog/` |
 | 作成日 / 作成者 | YYYY-MM-DD / {名前} |
 
+## 評価の再現設定
+
+> 評価を実行する前に決め、各 run の `receipt.json` に同じ値を記録する。モデルや rubric を変えたら新しい評価runとして扱う。
+
+| 項目 | 記入 |
+|---|---|
+| 評価モデル | `{model identifier}` |
+| Temperature | `0` |
+| Prompt Version | `prompt-v1` |
+| Rubric Version | `rubric-v1` |
+| 評価時点の成果物 | Git commit SHA と artifact hash を receipt に記録 |
+
 ## 選択した評価観点
 
 | カタログ ID | 評価観点 | 採用理由 | この案件での具体化 |

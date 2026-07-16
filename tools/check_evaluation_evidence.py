@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -12,6 +13,16 @@ from pathlib import Path
 PLACEHOLDERS = {"", "{agent ID returned by the orchestrator}", "TBD", "TODO", None}
 VALID_VERDICTS = {"Pass", "Fix", "Needs Review"}
 EVALUATION_DIR = "evaluation"
+REPRODUCIBILITY_FIELDS = (
+    "evaluated_commit_sha",
+    "requirements_hash",
+    "eval_cases_hash",
+    "artifact_hashes",
+    "evaluator_model",
+    "evaluator_prompt_version",
+    "rubric_version",
+    "temperature",
+)
 
 
 def has_substantive_content(path: Path) -> bool:
@@ -37,6 +48,37 @@ def has_loop_log(project_dir: Path, run_id: str) -> bool:
     return "```mermaid" in content and run_id in content
 
 
+def sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def check_reproducibility(project_dir: Path, run_dir: Path, receipt: dict) -> list[str]:
+    """Validate schema v2 receipts while accepting pre-v2 project history."""
+    if receipt.get("receipt_schema_version", 1) < 2:
+        return []
+    failures: list[str] = []
+    for field in REPRODUCIBILITY_FIELDS:
+        value = receipt.get(field)
+        if value in PLACEHOLDERS or value == {}:
+            failures.append(f"{run_dir.name}: {field} is required for receipt schema v2")
+    if not isinstance(receipt.get("artifact_hashes"), dict):
+        failures.append(f"{run_dir.name}: artifact_hashes must be an object")
+    if not isinstance(receipt.get("temperature"), (int, float)):
+        failures.append(f"{run_dir.name}: temperature must be numeric")
+
+    # These hashes bind a receipt to the evaluated inputs. They are intentionally
+    # compared only when the files still exist; a later edit should not erase an
+    # otherwise valid historical evaluation.
+    for field, relative_path in (
+        ("requirements_hash", "project-requirements.md"),
+        ("eval_cases_hash", "evaluation/eval-cases.md"),
+    ):
+        path = project_dir / relative_path
+        if path.is_file() and receipt.get(field) and receipt[field] != sha256_file(path):
+            failures.append(f"{run_dir.name}: {field} does not match the evaluated file")
+    return failures
+
+
 def check_run(project_dir: Path, run_dir: Path) -> list[str]:
     failures: list[str] = []
     receipt_path = run_dir / "receipt.json"
@@ -53,6 +95,7 @@ def check_run(project_dir: Path, run_dir: Path) -> list[str]:
         failures.append(f"{run_dir.name}: started_at and completed_at are required")
     if receipt.get("verdict") not in VALID_VERDICTS:
         failures.append(f"{run_dir.name}: verdict must be Pass, Fix, or Needs Review")
+    failures.extend(check_reproducibility(project_dir, run_dir, receipt))
     if not has_substantive_content(run_dir / "evaluator-input.md"):
         failures.append(f"{run_dir.name}: evaluator-input.md is missing or empty")
     if not has_substantive_content(run_dir / "evaluator-result.md"):

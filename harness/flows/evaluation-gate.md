@@ -72,7 +72,7 @@ ID / 宣言済みの評価観点 / テストレベル / Pass|Fix|Needs Review / 
 
 LLM 評価ごとに `projects/{project_name}/evaluation/runs/{run_id}/` を作り、次を保存する。
 
-- `receipt.json`: サブエージェント起動で返った agent ID、`fresh_context`、許可した入力、開始・完了時刻、最終判定
+- `receipt.json`: サブエージェント起動で返った agent ID、`fresh_context`、許可した入力、開始・完了時刻、最終判定に加え、評価した Git commit SHA、要件・eval cases・成果物の SHA-256、評価モデル、temperature、prompt / rubric version
 - `evaluator-input.md`: 実際に評価サブエージェントへ渡した依頼文
 - `evaluator-result.md`: 評価サブエージェントの返答全文
 - `playwright-evidence.md`: Web App の場合のみ必須
@@ -92,6 +92,7 @@ python3 tools/check_formal_evaluation_gate.py
 ```
 
 この検査は Git hook と GitHub Actions でも実行する。正式判定だけを書いて評価サブエージェント証跡がない状態は失敗扱いにする。
+新規の receipt schema v2 は再現情報が欠ける場合も失敗する。Git管理外だけは `evaluated_commit_sha: "unavailable"` と記録する。既存の schema 未記載 receipt は履歴として読めるため、直ちに失敗にはしない。
 
 ## Gate D: ループ制御
 
@@ -107,5 +108,7 @@ python3 tools/check_formal_evaluation_gate.py
 - 同じ ID が 2 回連続で `Fix` になった
 - 自動修正が 2 回に達した
 - 修正にスコープ変更または評価基準変更が必要になった
+
+停止後に自動で次の評価runを作らない。`check_formal_evaluation_gate.py` は、`Needs Review` の後、または 2 回目の `Fix` の後に継続したrunがあれば失敗する。
 
 成果物に合わせて acceptance criteria や eval cases を緩めない。変更が必要な場合は変更履歴に理由を残し、人間確認を挟む。

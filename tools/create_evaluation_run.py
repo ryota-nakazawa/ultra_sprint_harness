@@ -4,9 +4,24 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
+
+
+def sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def git_commit(project_dir: Path) -> str | None:
+    result = subprocess.run(
+        ["git", "-C", str(project_dir), "rev-parse", "HEAD"],
+        text=True,
+        capture_output=True,
+    )
+    return result.stdout.strip() if result.returncode == 0 else None
 
 
 def main() -> None:
@@ -16,6 +31,16 @@ def main() -> None:
     parser.add_argument("--agent-id", required=True)
     parser.add_argument("--agent-nickname", default="")
     parser.add_argument("--scope", choices=["web_app", "non_ui"], required=True)
+    parser.add_argument("--model", required=True, help="Evaluator model identifier")
+    parser.add_argument("--prompt-version", required=True)
+    parser.add_argument("--rubric-version", required=True)
+    parser.add_argument("--temperature", type=float, required=True)
+    parser.add_argument(
+        "--artifact",
+        action="append",
+        required=True,
+        help="Artifact file to hash; repeat for multiple files. Paths are relative to --project-dir.",
+    )
     args = parser.parse_args()
 
     project_dir = Path(args.project_dir).resolve()
@@ -24,7 +49,15 @@ def main() -> None:
     run_dir = project_dir / "evaluation" / "runs" / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
 
+    artifacts: dict[str, str] = {}
+    for artifact in args.artifact:
+        path = (project_dir / artifact).resolve()
+        if not path.is_file():
+            raise SystemExit(f"artifact must be an existing file: {artifact}")
+        artifacts[str(path.relative_to(project_dir))] = sha256_file(path)
+
     receipt = {
+        "receipt_schema_version": 2,
         "run_id": run_id,
         "project": project_dir.name,
         "iteration": args.iteration,
@@ -55,6 +88,14 @@ def main() -> None:
             "implementation rationale",
             "unfinished-work explanations",
         ],
+        "evaluated_commit_sha": git_commit(project_dir) or "unavailable",
+        "requirements_hash": sha256_file(project_dir / "project-requirements.md"),
+        "eval_cases_hash": sha256_file(project_dir / "evaluation" / "eval-cases.md"),
+        "artifact_hashes": artifacts,
+        "evaluator_model": args.model,
+        "evaluator_prompt_version": args.prompt_version,
+        "rubric_version": args.rubric_version,
+        "temperature": args.temperature,
         "started_at": timestamp.isoformat().replace("+00:00", "Z"),
         "completed_at": None,
         "verdict": None,

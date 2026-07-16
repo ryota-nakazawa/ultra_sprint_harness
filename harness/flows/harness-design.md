@@ -120,7 +120,7 @@ LLM で判定する項目は、実装担当とは別コンテキストの評価�
 評価エージェントには、成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡さない。
 評価エージェントは、各項目について `ID / 評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返す。`acceptance-criteria.md` と `eval-cases.md` で宣言された評価観点だけを判定対象にし、安全性・権限・送信・削除などの高影響操作に不明点があれば `Needs Review` とする。
 
-評価エージェントの起動時には `projects/{プロジェクト名}/evaluation-runs/{run-id}/` を作る。起動 API が返した agent ID と `fresh_context` を `receipt.json` に、実際の評価依頼を `evaluator-input.md` に、返答全文を `evaluator-result.md` に保存する。
+評価エージェントの起動時には `projects/{プロジェクト名}/evaluation/runs/{run-id}/` を作る。起動 API が返した agent ID、`fresh_context`、評価時点の commit・要件・eval cases・成果物のhash、モデル設定を `receipt.json` に、実際の評価依頼を `evaluator-input.md` に、返答全文を `evaluator-result.md` に保存する。
 
 評価結果に `Fix` がある場合は、実装へ戻して修正し、再評価する。自動修正は最大 2 回まで。3 回目の実装・評価には入らない。
 `Needs Review` が 1 件でも出た場合、同じ ID が 2 回連続で `Fix` になった場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止める。
