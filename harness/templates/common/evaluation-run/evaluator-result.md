@@ -15,4 +15,4 @@
 | Item | Record |
 |---|---|
 | Next action | Complete / Return to implementation / Stop for human review |
-| Stop reason | All Pass / Needs Review / Max fixes reached / Repeated Fix / Scope change required |
+| Stop reason | All Pass / Needs Review / Two Fix runs reached / Scope change required |

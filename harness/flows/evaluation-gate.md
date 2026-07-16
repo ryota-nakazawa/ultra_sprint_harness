@@ -92,7 +92,7 @@ python3 tools/check_formal_evaluation_gate.py
 ```
 
 この検査は Git hook と GitHub Actions でも実行する。正式判定だけを書いて評価サブエージェント証跡がない状態は失敗扱いにする。
-新規の receipt schema v2 は再現情報が欠ける場合も失敗する。Git管理外だけは `evaluated_commit_sha: "unavailable"` と記録する。既存の schema 未記載 receipt は履歴として読めるため、直ちに失敗にはしない。
+新規の receipt schema v2 は再現情報が欠ける場合も失敗する。`evaluated_commit_sha` は評価時点の監査情報であり、`unavailable` は正式評価に使えない。現在の HEAD が異なっていても、要件・eval cases・成果物の hash がすべて一致すれば使える。いずれかが異なる過去runは監査履歴として残すが、現在の正式判定には使えない。既存の schema 未記載 receipt は履歴として読めるため、直ちに失敗にはしない。
 
 ## Gate D: ループ制御
 
@@ -105,10 +105,9 @@ python3 tools/check_formal_evaluation_gate.py
 次の場合は必ず停止する。
 
 - `Needs Review` が 1 件以上出た
-- 同じ ID が 2 回連続で `Fix` になった
-- 自動修正が 2 回に達した
+- run全体の `Fix` が 2 回発生した
 - 修正にスコープ変更または評価基準変更が必要になった
 
-停止後に自動で次の評価runを作らない。`check_formal_evaluation_gate.py` は、`Needs Review` の後、または 2 回目の `Fix` の後に継続したrunがあれば失敗する。
+1 回目の `Fix` 後の再評価runは許可する。停止後に自動で次の評価runを作らない。`check_formal_evaluation_gate.py` は、`Needs Review` の後、または run全体で 2 回目の `Fix` の後に継続したrunがあれば失敗する。
 
 成果物に合わせて acceptance criteria や eval cases を緩めない。変更が必要な場合は変更履歴に理由を残し、人間確認を挟む。

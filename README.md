@@ -410,7 +410,7 @@ Workflow / ハーネス設計フローは、AI への指示フローそのもの
 
 **Inner Loop** は「何を作ればPoCとして十分か」を先に決めて、最小の成果物を作るループです。ここでの自己確認はデバッグのためで、正式判定ではありません。
 
-**Eval Loop** は、先に書いた `acceptance-criteria.md` と `eval-cases.md` だけを評価するループです。独立評価の入力・結果・評価時点のcommit、要件、eval cases、成果物のhashとモデル設定を `receipt.json` に残します。再現のための記録であり、Runnerや自動Graderを導入するものではありません。
+**Eval Loop** は、先に書いた `acceptance-criteria.md` と `eval-cases.md` だけを評価するループです。独立評価の入力・結果・評価時点のcommit、要件、eval cases、成果物のhashとモデル設定を `receipt.json` に残します。commitは監査情報、現在の正式判定への利用可否は要件・eval cases・成果物hashの一致で判断します。過去runは履歴として残しますが、成果物が変わったrunは現在の正式判定に使えません。再現のための記録であり、Runnerや自動Graderを導入するものではありません。
 
 **Learning Loop** は、実際の失敗や違和感を「次に確認できる知識」へ変えるループです。`findings.md` では `Implementation / Requirement / Evaluation Spec / Missing Eval Case / Tool / UX` に分類し、まず案件のeval caseに戻します。横展開できるものだけ `promotion-candidates.md` に下書きし、人が承認します。
 
@@ -458,7 +458,7 @@ LLM で判定する場合は、実装担当とは別コンテキストの評価�
 
 評価結果に `Fix` がある場合は、実装へ戻して修正し、再評価します。
 自動修正は最大 2 回までです。3 回目の実装・評価には入りません。
-`Needs Review` が 1 件でも出た場合、同じ ID が 2 回連続で `Fix` になった場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止めます。
+`Needs Review` が 1 件でも出た場合、run全体の `Fix` が 2 回発生した場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止めます。1 回目の `Fix` 後の再評価は許可し、2 回目の `Fix` 後に追加runを作ることは許可しません。
 
 - `Fix`: 明らかな未実装、文言ミス、壊れた導線やエラー、条件に照らして明確に No のもの
 - `Needs Review`: 要件や評価基準が曖昧、顧客判断が必要、スコープを広げないと直せない、主観的な良し悪し、安全性の高い判断

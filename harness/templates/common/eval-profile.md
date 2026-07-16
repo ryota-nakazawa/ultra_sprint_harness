@@ -21,7 +21,7 @@
 | Temperature | `0` |
 | Prompt Version | `prompt-v1` |
 | Rubric Version | `rubric-v1` |
-| 評価時点の成果物 | Git commit SHA と artifact hash を receipt に記録 |
+| 評価時点の成果物 | Git commit SHA と artifact hash を receipt に記録。現在の正式判定には hash 一致が必要 |
 
 ## 選択した評価観点
 

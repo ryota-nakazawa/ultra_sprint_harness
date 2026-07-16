@@ -35,6 +35,8 @@ def check(project_dir: Path) -> list[str]:
         if receipt["verdict"] == "Needs Review" and later:
             failures.append(f"{run_dir.name}: Needs Review must stop the automatic loop")
         if receipt["verdict"] == "Fix":
+            # Receipts store one verdict per run, not per eval-case ID. Count
+            # Fix runs across the automatic loop and stop after the second.
             prior_fixes = [item for item in runs[: index + 1] if item[2]["verdict"] == "Fix"]
             if len(prior_fixes) >= 2 and later:
                 failures.append(f"{run_dir.name}: two Fix results must stop the automatic loop")

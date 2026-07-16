@@ -30,7 +30,7 @@
     "implementation rationale",
     "unfinished-work explanations"
   ],
-  "evaluated_commit_sha": "Git commit SHA evaluated (or 'unavailable' outside Git)",
+  "evaluated_commit_sha": "Git commit SHA evaluated (required for schema v2 formal evaluation)",
   "requirements_hash": "SHA-256 of project-requirements.md at evaluation time",
   "eval_cases_hash": "SHA-256 of evaluation/eval-cases.md at evaluation time",
   "artifact_hashes": {

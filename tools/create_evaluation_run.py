@@ -44,6 +44,9 @@ def main() -> None:
     args = parser.parse_args()
 
     project_dir = Path(args.project_dir).resolve()
+    commit_sha = git_commit(project_dir)
+    if not commit_sha:
+        raise SystemExit("schema v2 formal evaluation requires a Git commit SHA")
     timestamp = datetime.now(timezone.utc).replace(microsecond=0)
     run_id = f"{timestamp.strftime('%Y%m%dT%H%M%SZ')}-iteration-{args.iteration:02d}"
     run_dir = project_dir / "evaluation" / "runs" / run_id
@@ -88,7 +91,7 @@ def main() -> None:
             "implementation rationale",
             "unfinished-work explanations",
         ],
-        "evaluated_commit_sha": git_commit(project_dir) or "unavailable",
+        "evaluated_commit_sha": commit_sha,
         "requirements_hash": sha256_file(project_dir / "project-requirements.md"),
         "eval_cases_hash": sha256_file(project_dir / "evaluation" / "eval-cases.md"),
         "artifact_hashes": artifacts,

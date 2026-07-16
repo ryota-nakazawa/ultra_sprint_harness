@@ -90,8 +90,7 @@ LLM 判定を使う場合は、評価エージェントに次だけを渡す。
 
 - すべて `Pass` になった
 - `Needs Review` が 1 件以上出た
-- 自動修正が 2 回に達した（3 回目の実装・評価には入らない）
-- 同じ ID が 2 回連続で `Fix` になった
+- run全体の `Fix` が 2 回発生した（2 回目の Fix 後、3 回目の実装・評価には入らない）
 - 修正にスコープ変更や評価基準変更が必要になった
 
 ## 2.7 評価実行の証跡
@@ -120,7 +119,7 @@ python3 tools/create_evaluation_run.py \
   --artifact path/to/artifact
 ```
 
-正式な `Pass / Fix / Needs Review` をこのファイルへ記録する前に、`python3 tools/check_evaluation_evidence.py --project-dir projects/{プロジェクト名}` を実行する。失敗時は、結果を `未判定` のままにし、`evaluation-status.md` に自己確認だけを記録する。
+正式な `Pass / Fix / Needs Review` をこのファイルへ記録する前に、`python3 tools/check_evaluation_evidence.py --project-dir projects/{プロジェクト名}` を実行する。評価後に成果物・要件・eval casesが変わるとhash検査が失敗し、その過去runは監査履歴として残るが現在の正式判定には使えない。失敗時は、結果を `未判定` のままにし、`evaluation-status.md` に自己確認だけを記録する。
 
 ローカルの証跡は後から編集可能な運用ログであり、改ざん耐性は持たない。改ざん耐性が必要になった時だけ、CI 実行 ID や追記専用の外部ログへ移す。
 

@@ -174,7 +174,7 @@ LLM で判定する項目は、実装担当とは別コンテキストの評価�
 評価エージェントの起動時には `projects/{プロジェクト名}/evaluation/runs/{run-id}/` を作る。起動 API が返した agent ID、`fresh_context`、評価時点の commit・要件・eval cases・成果物のhash、モデル設定を `receipt.json` に、実際の評価依頼を `evaluator-input.md` に、返答全文を `evaluator-result.md` に保存する。
 
 評価結果に `Fix` がある場合は、実装へ戻して修正し、再評価する。自動修正は最大 2 回まで。3 回目の実装・評価には入らない。
-`Needs Review` が 1 件でも出た場合、同じ ID が 2 回連続で `Fix` になった場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止める。
+`Needs Review` が 1 件でも出た場合、run全体の `Fix` が 2 回発生した場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止める。
 止めた理由と要チェック項目は `eval-cases.md` と `sprint-metrics.md` に記録する。
 
 `Fix` にしてよいのは、明らかな未実装、文言ミス、壊れた導線やエラー、条件に照らして明確に No のものだけ。
