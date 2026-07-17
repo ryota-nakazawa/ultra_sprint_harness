@@ -1,4 +1,5 @@
 {
+  "receipt_schema_version": 2,
   "run_id": "{UTC timestamp}-iteration-{NN}",
   "project": "{project name}",
   "iteration": 0,
@@ -29,6 +30,16 @@
     "implementation rationale",
     "unfinished-work explanations"
   ],
+  "evaluated_commit_sha": "Git commit SHA evaluated (required for schema v2 formal evaluation)",
+  "requirements_hash": "SHA-256 of project-requirements.md at evaluation time",
+  "eval_cases_hash": "SHA-256 of evaluation/eval-cases.md at evaluation time",
+  "artifact_hashes": {
+    "relative/path/to/artifact": "SHA-256"
+  },
+  "evaluator_model": "model identifier",
+  "evaluator_prompt_version": "prompt-v1",
+  "rubric_version": "rubric-v1",
+  "temperature": 0,
   "started_at": "YYYY-MM-DDTHH:MM:SSZ",
   "completed_at": "YYYY-MM-DDTHH:MM:SSZ",
   "verdict": "Pass | Fix | Needs Review"

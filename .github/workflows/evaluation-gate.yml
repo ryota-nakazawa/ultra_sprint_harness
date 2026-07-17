@@ -12,5 +12,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+      - name: Check Python syntax
+        run: python3 -m py_compile tools/*.py
+      - name: Run harness meta evals
+        run: python3 tools/meta_evals.py
       - name: Check formal evaluation evidence
         run: python3 tools/check_formal_evaluation_gate.py

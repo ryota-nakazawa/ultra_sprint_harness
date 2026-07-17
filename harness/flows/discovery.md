@@ -24,7 +24,7 @@
 - `projects/{プロジェクト名}/evaluation/evaluation-loop.md`
 - 必要に応じて `projects/{プロジェクト名}/task-plan.md`
 - 必要に応じて `projects/{プロジェクト名}/progress.md`
-- 必要に応じて `projects/{プロジェクト名}/findings.md`
+- 必要に応じて `projects/{プロジェクト名}/findings.md`（`harness/templates/common/findings.md` を複製）
 - 必要に応じて `projects/{プロジェクト名}/findings-diagrams/`
 
 ## フェーズ
@@ -295,12 +295,12 @@ eval-cases.md は、重い自動評価基盤ではなく軽量な Evals ケー�
 ```markdown
 # Findings
 
-## Notes
-
-- 調査結果:
-- 意思決定:
-- 保留事項:
+| Finding ID | 分類 | 起きたこと / 影響 | 再現条件 | 次の動き | eval case | 昇格候補 |
+|---|---|---|---|---|---|---|
+| F-001 | Implementation / Requirement / Evaluation Spec / Missing Eval Case / Tool / UX | | | Fix / Needs Review / 記録のみ | E-__ / 新規 | CAND-__ / なし |
 ```
+
+分類の定義と Learning Loop の記入方法は `harness/templates/common/findings.md` を使う。再現可能な失敗はまず案件の `eval-cases.md` に戻し、昇格の判断は `promotion-candidates.md` の基準に従う。
 
 ## `findings-diagrams/` の使い方
 

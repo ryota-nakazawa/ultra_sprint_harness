@@ -80,6 +80,15 @@ def check_evidence(project_dir: Path, run_id: str) -> tuple[bool, str]:
     return result.returncode == 0, result.stdout + result.stderr
 
 
+def check_loop_control(project_dir: Path) -> tuple[bool, str]:
+    result = subprocess.run(
+        [sys.executable, "tools/check_evaluation_loop_control.py", "--project-dir", str(project_dir)],
+        text=True,
+        capture_output=True,
+    )
+    return result.returncode == 0, result.stdout + result.stderr
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-dir", action="append", help="Project directory to check. Can be repeated.")
@@ -123,6 +132,11 @@ def main() -> int:
                 f"{project_dir.name}: independent LLM run exists, but evidence validation failed: "
                 + " | ".join(evidence_errors)
             )
+            continue
+
+        loop_ok, loop_output = check_loop_control(project_dir)
+        if not loop_ok:
+            failures.append(f"{project_dir.name}: {loop_output.strip()}")
 
     if failures:
         print("FAIL: formal evaluation gate failed.")

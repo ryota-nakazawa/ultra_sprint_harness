@@ -13,7 +13,7 @@ Codex を使って、非エンジニアでも短時間でプロトタイプを�
 
 という進め方を前提にしています。
 成果物の評価は、重い自動評価基盤ではなく、`acceptance-criteria.md` と `eval-cases.md` を使った軽量 Evals として扱います。
-失敗や違和感は `findings.md` に残し、次スプリントの評価ケースへ戻します。
+失敗や違和感は分類つきで `findings.md` に残し、次スプリントの評価ケースへ戻します。
 正式な `Pass / Fix / Needs Review` は、必ず `fresh_context` の評価サブエージェントで実施します。自己確認だけの判定は正式評価として扱いません。
 
 評価ファイルはプロジェクト直下へ散在させず、すべて `projects/{project}/evaluation/` にまとめます。要件・実装・findings はプロジェクト直下に残し、評価条件、ケース、トレーサビリティ、ステータス、メトリクス、実行証跡は `evaluation/` 配下で管理します。
@@ -400,11 +400,19 @@ Workflow / ハーネス設計フローは、AI への指示フローそのもの
 - `test-viewpoints.md`: 正常系、境界、異常、状態遷移などを案件で選ぶ Vモデル Lite の観点カタログ
 - `traceability.md`: 全案件で使う、中核要件 → acceptance criterion → eval case の対応表
 
-ループは次の 3 段で扱います。
+ループエンジニアリングは、同じ「改善」を目的にしていても、扱う時間軸が違う3つの小さなループです。重い評価基盤ではなく、各ループをMarkdown数枚で再現可能にします。
 
-1. Inner Loop: discovery の成立条件を満たす成果物を作り、第1層・第2層で判定する
-2. Eval Loop: `eval-cases.md` のケースで、業務成功、誤実行、安全性、再現性、運用負荷を確認する
-3. Learning Loop: デモ、レビュー、失敗事例を `findings.md` に残し、次回の `eval-cases.md` に戻す
+| ループ | 目的 | いつ回すか | 主な記録 | 終了・次の動き |
+|---|---|---|---|---|
+| Inner Loop | 作れる状態にする | discovery〜自己確認 | requirements / acceptance criteria | 第1・第2層を確認し、独立評価へ渡す |
+| Eval Loop | 定義済みの条件で品質を判断する | 成果物ごと | eval cases / receipt / evaluation-loop | Passでデモ、Fixは最大2回、Needs Reviewで停止 |
+| Learning Loop | 次回の判断を少し良くする | デモ・レビュー・利用後 | findings / 新規eval case / promotion candidates | 案件内に戻すか、人の承認へ回す |
+
+**Inner Loop** は「何を作ればPoCとして十分か」を先に決めて、最小の成果物を作るループです。ここでの自己確認はデバッグのためで、正式判定ではありません。
+
+**Eval Loop** は、先に書いた `acceptance-criteria.md` と `eval-cases.md` だけを評価するループです。独立評価の入力・結果・評価時点のcommit、要件、eval cases、成果物のhashとモデル設定を `receipt.json` に残します。commitは監査情報、現在の正式判定への利用可否は要件・eval cases・成果物hashの一致で判断します。過去runは履歴として残しますが、成果物が変わったrunは現在の正式判定に使えません。再現のための記録であり、Runnerや自動Graderを導入するものではありません。
+
+**Learning Loop** は、実際の失敗や違和感を「次に確認できる知識」へ変えるループです。`findings.md` では `Implementation / Requirement / Evaluation Spec / Missing Eval Case / Tool / UX` に分類し、まず案件のeval caseに戻します。横展開できるものだけ `promotion-candidates.md` に下書きし、人が承認します。
 
 ### 評価ループの実行順
 
@@ -446,16 +454,36 @@ LLM で判定する場合は、実装担当とは別コンテキストの評価�
 評価エージェントには成果物、実行手順、`project-requirements.md`、`acceptance-criteria.md`、`eval-cases.md`、`eval-profile.md`、必須の `traceability.md` だけを渡し、実装中の会話ログや背景説明は渡しません。
 評価エージェントは、各項目について `ID / 評価観点 / Pass / Fix / Needs Review / 根拠 / 不合格時の再現手順` を返します。`acceptance-criteria.md` と `eval-cases.md` で宣言した評価観点だけを判定対象にし、未定義の品質を推測して減点しません。安全性・権限・送信・削除などの高影響操作に不明点があれば `Needs Review` とします。
 
-各 LLM 評価では `projects/{project}/evaluation/runs/{run-id}/` を作り、オーケストレーターが返した評価 agent ID、`fresh_context`、許可した入力を `receipt.json` に保存します。実際に送った依頼文は `evaluator-input.md`、返答全文は `evaluator-result.md` に保存します。これにより、評価ログだけでなく「別サブエージェントを起動して判定した」ことを確認できます。ローカル記録は監査用の運用証跡であり、改ざん耐性が必要になった段階で CI または追記専用の外部ログへ移します。
+各 LLM 評価では `projects/{project}/evaluation/runs/{run-id}/` を作り、オーケストレーターが返した評価 agent ID、`fresh_context`、許可した入力を `receipt.json` に保存します。新規receiptでは、評価時点のcommit、要件・eval cases・成果物のSHA-256、評価モデル、temperature、prompt / rubric versionも保存します。実際に送った依頼文は `evaluator-input.md`、返答全文は `evaluator-result.md` に保存します。これにより、評価ログだけでなく「別サブエージェントを起動して判定した」ことと、何をどう評価したかを確認できます。ローカル記録は監査用の運用証跡であり、改ざん耐性が必要になった段階で CI または追記専用の外部ログへ移します。
 
 評価結果に `Fix` がある場合は、実装へ戻して修正し、再評価します。
 自動修正は最大 2 回までです。3 回目の実装・評価には入りません。
-`Needs Review` が 1 件でも出た場合、同じ ID が 2 回連続で `Fix` になった場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止めます。
+`Needs Review` が 1 件でも出た場合、run全体の `Fix` が 2 回発生した場合、または修正にスコープ変更や評価基準変更が必要な場合は、自動ループを止めます。1 回目の `Fix` 後の再評価は許可し、2 回目の `Fix` 後に追加runを作ることは許可しません。
 
 - `Fix`: 明らかな未実装、文言ミス、壊れた導線やエラー、条件に照らして明確に No のもの
 - `Needs Review`: 要件や評価基準が曖昧、顧客判断が必要、スコープを広げないと直せない、主観的な良し悪し、安全性の高い判断
 
 止めた理由と要チェック項目は `eval-cases.md` と `sprint-metrics.md` に記録します。
+
+### Learning Loopで共通カタログへ昇格するもの
+
+共通カタログへ昇格するのは、再現手順・影響・原因分類が `findings.md` にあり、案件固有の事情を除いても別案件で起こり得て、適用条件と期待する振る舞いを短く書ける学びだけです。既存カタログとの重複も確認します。高影響な操作は自動合否にせず、`Needs Review` を促すルールとして扱います。
+
+一回限りの実装ミス、未確定要件、特定ツールの一時障害、主観だけの好みは案件内に残します。AIは `promotion-candidates.md` を下書きするだけで、共通カタログを直接更新しません。
+
+### Meta Evals（ハーネス自身の確認）
+
+ハーネスのガードレールは、次の軽い回帰確認で守ります。
+
+```bash
+python3 tools/meta_evals.py
+```
+
+これは Gate A が未準備で失敗すること、Gate B が証跡なしで失敗すること、`Needs Review` 後に自動継続できないこと、2回目の `Fix` 後に自動継続できないことを確認します。プロダクトの評価Runnerではありません。
+
+### 将来構想（今回実装しないもの）
+
+案件数や反復が十分に増え、手作業のMarkdown運用が明確なボトルネックになった場合にのみ、Eval Runner、Regression Runner、Benchmark比較、自動Grader、自動Dataset生成を検討します。OpenAI Evals互換を目標にはせず、導入前にこの軽量運用で不足している具体的な学習課題を確認します。
 
 ## 外部 skill / tool の呼び出しルール
 
